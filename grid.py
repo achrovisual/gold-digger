@@ -9,7 +9,7 @@ class Grid():
         self.grid = [["-" for i in range(self.size)] for i in range(self.size)]
 
         # Initialize objects
-        self.miner = Miner("Miner", {"x": 1, "y": 1})
+        self.miner = Miner("Miner", {"x": 1, "y": 1}, self.size)
         self.gold = Object("Gold", {"x": random.randrange(1, self.size, 1), "y": random.randrange(1, self.size, 1)})
         self.pit = Object("Pit", {"x": random.randrange(1, self.size, 1), "y": random.randrange(1, self.size, 1)})
         self.beacon = Object("Beacon", {"x": random.randrange(1, self.size, 1), "y": random.randrange(1, self.size, 1)})

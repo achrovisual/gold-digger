@@ -1,18 +1,19 @@
 from object import Object
 
 class Miner(Object):
-    def __init__(self, name, coordinates):
+    def __init__(self, name, coordinates, size):
         self.name = "Miner"
         self.coordinates = {"x": 1, "y": 1}
         self.compass = "east"
         self.scanned = None
+        self.size = size
     def move(self):
         # Update coordinates here
-        if self.compass == 'east': #add a condition that not at the edge of the map
+        if self.compass == 'east' < self.size: #add a condition that not at the edge of the map
             self.coordinates['x']+=1
         elif self.compass=='north' and self.coordinates['y'] != 1:
             self.coordinates['y']-=1
-        elif self.compass=='south': #add a condition that not at the edge of the map
+        elif self.compass=='south'< self.size: #add a condition that not at the edge of the map
             self.coordinates['y']+=1
         elif self.compass=='west' and self.coordinates['x'] != 1:
             self.coordinates['x']-=1
