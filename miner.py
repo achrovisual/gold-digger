@@ -2,11 +2,13 @@ from object import Object
 
 class Miner(Object):
     def __init__(self, name, coordinates, size):
-        self.name = "Miner"
-        self.coordinates = {"x": 1, "y": 1}
+        self.name = name
+        self.coordinates = coordinates
         self.compass = "east"
         self.scanned = None
         self.size = size
+        self.gridScanRetVal = ""
+        
     def move(self):
         # Update coordinates here
         if self.compass == 'east' < self.size: #add a condition that not at the edge of the map
@@ -29,11 +31,9 @@ class Miner(Object):
         elif self.compass == 'west':
             self.compass = 'north'
 
-    def scan(self):
+    def scanRes(self, gridScanRetval):
         # Update scanned here
-        returner = None
-
-        #visit front of miner
+        self.gridScanRetVal = gridScanRetval
         
     def check():
         # Check if current block is goal

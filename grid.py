@@ -31,3 +31,25 @@ class Grid():
             for element in row:
                 print(element, end = "")
             print()
+            
+    def scanMinerFront(self):
+        minerLoc = self.miner.coordinates
+        minerCompass = self.miner.compass
+        iterator = 0
+        anchorVal = 0
+        retVal = ''
+
+        if minerCompass == 'east':
+            iterator = int(minerLoc['y']) - 1
+            anchorVal = int(minerLoc['x']) - 1
+
+            while iterator < self.size and (retVal != 'B' or retVal != 'P'):
+                if self.grid[anchorVal][iterator] == 'B':
+                    retVal = 'B'
+                elif self.grid[anchorVal][iterator] == 'G':
+                    retVal = 'G'
+                elif self.grid[anchorVal][iterator] == 'P':
+                    retVal = 'P'
+                iterator+=1
+            
+            self.miner.scanRes(retVal)
