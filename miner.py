@@ -34,6 +34,8 @@ class Miner(Object):
     def scanRes(self, gridScanRetval):
         # Update scanned here
         self.gridScanRetVal = gridScanRetval
+        #perform decision here
+        #if self.gridScanRetVal == <X>, then <Y>
         
     def check():
         # Check if current block is goal
