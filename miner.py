@@ -10,25 +10,38 @@ class Miner(Object):
 
     def move(self):
         # Update coordinates here
-        if self.compass == 'east' < self.size: #add a condition that not at the edge of the map
-            self.coordinates['x']+=1
-        elif self.compass=='north' and self.coordinates['y'] != 1:
-            self.coordinates['y']-=1
-        elif self.compass=='south'< self.size: #add a condition that not at the edge of the map
-            self.coordinates['y']+=1
-        elif self.compass=='west' and self.coordinates['x'] != 1:
-            self.coordinates['x']-=1
+        if self.compass == 'east' and self.coordinates['x'] < self.size:: #add a condition that not at the edge of the map
+            self.coordinates['x'] += 1
+            return True
+        elif self.compass=='north' and self.coordinates['y'] < self.size:
+            self.coordinates['y'] += 1
+            return True
+        elif self.compass=='west' and self.coordinates['x'] >= 0:
+            self.coordinates['x'] -= 1
+            return True
+        elif self.compass=='south' and self.coordinates['y'] >= 0: #add a condition that not at the edge of the map
+            self.coordinates['y'] -= 1
+            return True
+        else:
+            print('reached edge')
+            return False
 
     def rotate(self):
         # Update compass here
         if self.compass == 'north':
             self.compass = 'east'
+            return True
         elif self.compass == 'east':
             self.compass = 'south'
+            return True
         elif self.compass == 'south':
             self.compass = 'west'
+            return True
         elif self.compass == 'west':
             self.compass = 'north'
+            return True
+
+        return False
 
     def scan(self, result):
         # Update scanned here
