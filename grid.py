@@ -24,9 +24,17 @@ class Grid():
         x = object.coordinates.get("x")
         y = object.coordinates.get("y")
 
-        self.grid[x - 1][y - 1] = object.name[0]
+        self.grid[x][y] = object.name[0]
 
     def show_grid(self):
+        # Update the grid
+        self.grid = [["-" for i in range(self.size)] for i in range(self.size)]
+        self.update_grid(self.miner)
+        self.update_grid(self.gold)
+        self.update_grid(self.pit)
+        self.update_grid(self.beacon)
+
+
         for row in self.grid:
             for element in row:
                 print(element, end = "")
@@ -41,8 +49,8 @@ class Grid():
 
         #lateral movement
         if miner_compass == 'east':
-            iterator = int(miner_location['x'])
-            anchor_value = int(miner_location['y'])
+            iterator = int(miner_location['y'])
+            anchor_value = int(miner_location['x'])
 
             while iterator < self.size and (return_value != 'B' or return_value != 'P'):
                 if self.grid[anchor_value][iterator] == 'B':
@@ -53,9 +61,9 @@ class Grid():
                     return_value = 'P'
                 iterator += 1
 
-        if miner_compass == 'west':
-            iterator = int(miner_location['x'])
-            anchor_value = int(miner_location['y'])
+        elif miner_compass == 'west':
+            iterator = int(miner_location['y'])
+            anchor_value = int(miner_location['x'])
 
             while iterator >= 0 and (return_value != 'B' or return_value != 'P'):
                 if self.grid[anchor_value][iterator] == 'B':
@@ -67,9 +75,9 @@ class Grid():
                 iterator -= 1
 
         #longitudinal movement
-        if miner_compass == 'south':
-            iterator = int(miner_location['y'])
-            anchor_value = int(miner_location['x'])
+        elif miner_compass == 'south':
+            iterator = int(miner_location['x'])
+            anchor_value = int(miner_location['y'])
 
             while iterator < self.size and (return_value != 'B' or return_value != 'P'):
                 if self.grid[iterator][anchor_value] == 'B':
@@ -80,9 +88,9 @@ class Grid():
                     return_value = 'P'
                 iterator += 1
 
-        if miner_compass == 'north':
-            iterator = int(miner_location['y'])
-            anchor_value = int(miner_location['x'])
+        elif miner_compass == 'north':
+            iterator = int(miner_location['x'])
+            anchor_value = int(miner_location['y'])
 
             while iterator >= 0 and (return_value != 'B' or return_value != 'P'):
                 if self.grid[iterator][anchor_value] == 'B':
@@ -92,17 +100,30 @@ class Grid():
                 elif self.grid[iterator][anchor_value] == 'P':
                     return_value = 'P'
                 iterator -= 1
+        else:
+            return False
 
         self.miner.scan(return_value)
+        return True
 
     def check(self):
         miner_location = self.miner.coordinates
-        x  = int(miner_location['x'])
-        y = int(miner_location['y'])
+
+        if self.miner.compass == "east" or self.miner.compass == "west":
+            x  = int(miner_location['x'])
+            y = int(miner_location['y']) + 1
+        else:
+            x  = int(miner_location['x']) + 1
+            y = int(miner_location['y'])
+
+        if x < 0 or x >= self.size or y < 0 or y >= self.size:
+            return "out"
 
         if self.grid[x][y] == 'B':
-            print("beacon")
+            return "beacon"
         elif self.grid[x][y] == 'P':
-            print("pit")
+            return "pit"
         elif self.grid[x][y] == 'G':
-            print("gold")
+            return "gold"
+        else:
+            return "null"
