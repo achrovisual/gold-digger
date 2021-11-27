@@ -31,79 +31,78 @@ class Grid():
             for element in row:
                 print(element, end = "")
             print()
-            
-    def scanMinerFront(self):
-        minerLoc = self.miner.coordinates
-        minerCompass = self.miner.compass
+
+    def scan(self):
+        miner_location = self.miner.coordinates
+        miner_compass = self.miner.compass
         iterator = 0
-        anchorVal = 0
-        retVal = ''
+        anchor_value = 0
+        return_value = ''
 
         #lateral movement
-        if minerCompass == 'east':
-            iterator = int(minerLoc['y'])
-            anchorVal = int(minerLoc['x']) - 1
+        if miner_compass == 'east':
+            iterator = int(miner_location['y'])
+            anchor_value = int(miner_location['x']) - 1
 
-            while iterator < self.size and (retVal != 'B' or retVal != 'P'):
-                if self.grid[anchorVal][iterator] == 'B':
-                    retVal = 'B'
-                elif self.grid[anchorVal][iterator] == 'G':
-                    retVal = 'G'
-                elif self.grid[anchorVal][iterator] == 'P':
-                    retVal = 'P'
-                iterator+=1
+            while iterator < self.size and (return_value != 'B' or return_value != 'P'):
+                if self.grid[anchor_value][iterator] == 'B':
+                    return_value = 'B'
+                elif self.grid[anchor_value][iterator] == 'G':
+                    return_value = 'G'
+                elif self.grid[anchor_value][iterator] == 'P':
+                    return_value = 'P'
+                iterator += 1
 
-        if minerCompass == 'west':
-            iterator = int(minerLoc['y']) - 2
-            anchorVal = int(minerLoc['x']) - 1
+        if miner_compass == 'west':
+            iterator = int(miner_location['y']) - 2
+            anchor_value = int(miner_location['x']) - 1
 
-            while iterator > 0 and (retVal != 'B' or retVal != 'P'):
-                if self.grid[anchorVal][iterator] == 'B':
-                    retVal = 'B'
-                elif self.grid[anchorVal][iterator] == 'G':
-                    retVal = 'G'
-                elif self.grid[anchorVal][iterator] == 'P':
-                    retVal = 'P'
-                iterator-=1
-        
+            while iterator > 0 and (return_value != 'B' or return_value != 'P'):
+                if self.grid[anchor_value][iterator] == 'B':
+                    return_value = 'B'
+                elif self.grid[anchor_value][iterator] == 'G':
+                    return_value = 'G'
+                elif self.grid[anchor_value][iterator] == 'P':
+                    return_value = 'P'
+                iterator -= 1
+
         #longitudinal movement
-        if minerCompass == 'south':
-            iterator = int(minerLoc['x'])
-            anchorVal = int(minerLoc['y']) - 1
+        if miner_compass == 'south':
+            iterator = int(miner_location['x'])
+            anchor_value = int(miner_location['y']) - 1
 
-            while iterator < self.size and (retVal != 'B' or retVal != 'P'):
-                if self.grid[iterator][anchorVal] == 'B':
-                    retVal = 'B'
-                elif self.grid[iterator][anchorVal] == 'G':
-                    retVal = 'G'
-                elif self.grid[iterator][anchorVal] == 'P':
-                    retVal = 'P'
-                iterator+=1        
-        
-        if minerCompass == 'north':
-            iterator = int(minerLoc['x']) - 2
-            anchorVal = int(minerLoc['y']) - 1
+            while iterator < self.size and (return_value != 'B' or return_value != 'P'):
+                if self.grid[iterator][anchor_value] == 'B':
+                    return_value = 'B'
+                elif self.grid[iterator][anchor_value] == 'G':
+                    return_value = 'G'
+                elif self.grid[iterator][anchor_value] == 'P':
+                    return_value = 'P'
+                iterator += 1
 
-            while iterator < self.size and (retVal != 'B' or retVal != 'P'):
-                if self.grid[iterator][anchorVal] == 'B':
-                    retVal = 'B'
-                elif self.grid[iterator][anchorVal] == 'G':
-                    retVal = 'G'
-                elif self.grid[iterator][anchorVal] == 'P':
-                    retVal = 'P'
-                iterator-=1     
-        
-        self.miner.scanRes(retVal)
-    
-    def checkCurrPos(self):
-        minerLoc = self.miner.coordinates
-        xPos = int(minerLoc['x']) - 1
-        yPos = int(minerLoc['y']) - 1
+        if miner_compass == 'north':
+            iterator = int(miner_location['x']) - 2
+            anchor_value = int(miner_location['y']) - 1
 
-        if self.grid[xPos][yPos] == 'B':
+            while iterator < self.size and (return_value != 'B' or return_value != 'P'):
+                if self.grid[iterator][anchor_value] == 'B':
+                    return_value = 'B'
+                elif self.grid[iterator][anchor_value] == 'G':
+                    return_value = 'G'
+                elif self.grid[iterator][anchor_value] == 'P':
+                    return_value = 'P'
+                iterator -= 1
+
+        self.miner.scan(return_value)
+
+    def check(self):
+        miner_location = self.miner.coordinates
+        x  = int(miner_location['x']) - 1
+        y = int(miner_location['y']) - 1
+
+        if self.grid[x][y] == 'B':
             print("Beacon found: <x> squares to goal")
-        elif self.grid[xPos][yPos] == 'P':
+        elif self.grid[x][y] == 'P':
             print("ded")
-        elif self.grid[xPos][yPos] == 'G':
+        elif self.grid[x][y] == 'G':
             print("Congratulations! You won!")
-        

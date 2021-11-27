@@ -7,8 +7,7 @@ class Miner(Object):
         self.compass = "east"
         self.scanned = None
         self.size = size
-        self.gridScanRetVal = ""
-        
+
     def move(self):
         # Update coordinates here
         if self.compass == 'east' < self.size: #add a condition that not at the edge of the map
@@ -31,8 +30,8 @@ class Miner(Object):
         elif self.compass == 'west':
             self.compass = 'north'
 
-    def scanRes(self, gridScanRetval):
+    def scan(self, result):
         # Update scanned here
-        self.gridScanRetVal = gridScanRetval
+        self.scanned = result
         #perform decision here
         #if self.gridScanRetVal == <X>, then <Y>
