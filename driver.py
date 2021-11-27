@@ -1,4 +1,6 @@
 from grid import Grid
+from bfs import BFS
 
 game = Grid(8)
-game.show_grid()
+
+smart = BFS(game)
