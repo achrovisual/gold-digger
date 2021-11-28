@@ -7,5 +7,6 @@ class Node():
         self.actions = actions
         self.parent = parent
         self.cost = None
+
     def set_cost(self, cost):
-        self.cost = cost
+        self.cost = int(cost)
