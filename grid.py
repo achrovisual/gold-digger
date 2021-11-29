@@ -127,7 +127,8 @@ class Grid():
             return "gold"
         else:
             return "null"
-    def astarScan(self):
+    
+    def smartScan(self):
         miner_location = self.miner.coordinates
         miner_compass = self.miner.compass
         iterator = 0
@@ -190,5 +191,4 @@ class Grid():
         else:
             return return_value
 
-        self.miner.scan(return_value)
         return return_value

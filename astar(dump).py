@@ -29,9 +29,9 @@ class astar(Agent):
         #heuristic values
 
         heurVal = {
-            'move': 2,
-            'rotate': 2, 
-            'scan': 1,
+            'move': 1,
+            'rotate': 1, 
+            'scan': 0,
             'goal': 0
         }
 
@@ -103,15 +103,14 @@ class astar(Agent):
                 currentNode.scannedFront = False
             else:
                 pass
-            checkCurrTile = self.grid.check()
-            moveList.append(currAction)
+            
+            print(currAction)
             print(currFront)
-            print(self.grid.miner.coordinates['x'])
-            print(self.grid.miner.coordinates['y'])
-            print(currentNode.scannedFront)
-            print(moveList)
             print(currentNode.cost)
             self.grid.show_grid()
+
+            checkCurrTile = self.grid.check()
+            print(checkCurrTile)
             if (checkCurrTile != 'gold' or checkCurrTile != 'pit') and (currentNode not in closedList):
                 if (currentNode not in closedList) and currentNode.scannedFront == False:
                     #we are in the middle of the grid OR we are in the edge of the grid but we're 
@@ -242,11 +241,12 @@ class astar(Agent):
                 newNode.set_cost(heurVal['goal'])
                 goalNode = newNode
                 closedList.append(goalNode)
+                break
             elif checkCurrTile == 'pit':
                 print("ran into pit")
                 break
             closedList.append(currentNode)
 
-        if goalNode != None:
+        if goalNode:
             print("found")
         

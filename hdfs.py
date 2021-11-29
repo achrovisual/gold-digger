@@ -19,9 +19,16 @@ class gbfs(Agent):
 
         #establish heuristic values
         heurVal = {
-            'scan': 0,
-            'move': 1,
-            'rotate': 1
+            'notScanned': 0, #haven't scanned the front yet
+            'alreadyScanned': 5, #already scanned the front, do we really want to scan again?
+            'rotateAwayNull': 1, #scan returned null, do we rotate?
+            'rotateAwayPit': 0, #avoid at all cost
+            'rotateAwayBeacon': 1, #nope
+            'rotateAwayEdge': 0, #reached the edge
+            'moveToScannedGold': -1, #scan returned gold, let's go!
+            'moveToScannedPit': 10, #JUST DON'T
+            'moveToNullBeacon': 0, #move if scan returned null
+            'movedAfterNull' : 2 #already moved after scan ret null
         }
 
         root = Node(None, x, y, miner_compass, None, None)
@@ -37,37 +44,22 @@ class gbfs(Agent):
         inGold = False
 
         while openList and not inGold:
-            min = 0
-
-            #priority queueing
-            for index in range(0, len(openList)):
-                if openList[index].cost < openList.cost:
-                    min = index
-            
-            currentNode = openList.pop(min)
+            currentNode = openList.pop()
             currFront = currentNode.front
             currX = currentNode.x
             currY = currentNode.y
             currAction = currentNode.actions
             scannedFront = currentNode.scannedFront
-
-            checkCurrTile = self.grid.check()
             #deploy actions here
+            checkCurrTile = self.grid.check()
+            
             
             if not currentNode.scannedGold:
                 if checkCurrTile != 'gold' or checkCurrTile != 'pit':
                     pass
+                elif checkCurrTile == 'gold':
+                    inGold = True
             else: #we found the goal node, our only option is to move forward
-                ##################################### MOVE NODE ################################################
-                #generate child node
-                newNode= Node(None, self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "move", currentNode)
-                #set chlid node cost
-                newNode.set_cost(heurVal['move'])
-                #set child to scanned
-                newNode.setScanned(True)
-                #set child node to scanned gold
-                newNode.setGold(True)
-                #append to open list
-                openList.append(newNode)
+                pass
             
             closedList.append(currentNode)
