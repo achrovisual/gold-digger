@@ -19,7 +19,7 @@ class astar(Agent):
 
         root = Node(None, x, y, miner_compass, None, None)
 
-        root.set_cost(0)
+        root.setCost(0)
         
         # Initialize node lists
         openList = [] #unexamined nodes
@@ -72,7 +72,7 @@ class astar(Agent):
                     #generate child node
                     newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", tempNode)
                     #set child node cost
-                    newNode.set_cost(heurVal['rotate'])
+                    newNode.setCost(heurVal['rotate'])
                     #append to closed list since we have to do this immediately
                     closedList.append(newNode)
                     currFront = self.grid.miner.compass
@@ -89,7 +89,7 @@ class astar(Agent):
                     #generate child node
                     newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", tempNode)
                     #set child node cost
-                    newNode.set_cost(heurVal['rotate'])
+                    newNode.setCost(heurVal['rotate'])
                     #append to closed list since we have to do this immediately
                     closedList.append(newNode)
 
@@ -123,7 +123,7 @@ class astar(Agent):
                         #generate child node
                         newNode = Node(None, self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], currFront, "scan", currentNode)
                         #set child node cost
-                        newNode.set_cost(heurVal['scan'])
+                        newNode.setCost(heurVal['scan'])
                         #set childe node to scanned
                         newNode.setScanned(True)
                         #add child node to open list
@@ -133,7 +133,7 @@ class astar(Agent):
                         #generate child node
                         newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                         #set child node cost
-                        newNode.set_cost(heurVal['rotate'])
+                        newNode.setCost(heurVal['rotate'])
                         newNode.setScanned(False)
                         #append to open list
                         openList.append(newNode)
@@ -143,7 +143,7 @@ class astar(Agent):
                         #generate child node
                         newNode= Node(None, self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "move", currentNode)
                         #set chlid node cost
-                        newNode.set_cost(heurVal['move'])
+                        newNode.setCost(heurVal['move'])
                         #set childe node to scanned
                         newNode.setScanned(True)
                         #append to open list
@@ -158,7 +158,7 @@ class astar(Agent):
                             #generate child node
                             newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                             #set child node cost
-                            newNode.set_cost(heurVal['rotate'])
+                            newNode.setCost(heurVal['rotate'])
                             newNode.setScanned(False)
                             #append to open list
                             openList.append(newNode)
@@ -172,7 +172,7 @@ class astar(Agent):
                             #generate child node
                             newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                             #set child node cost
-                            newNode.set_cost(heurVal['rotate'])
+                            newNode.setCost(heurVal['rotate'])
                             newNode.setScanned(False)
                             #append to open list
                             openList.append(newNode)
@@ -187,7 +187,7 @@ class astar(Agent):
                         #generate child node
                         newNode= Node(None, self.grid.miner.coordinates['x'], self.grid.miner.coordinates['x'], self.grid.miner.compass, "move", currentNode)
                         #set chlid node cost
-                        newNode.set_cost(heurVal['move'])
+                        newNode.setCost(heurVal['move'])
                         #set childe node to scanned
                         newNode.setScanned(True)
                         #append to open list
@@ -197,7 +197,7 @@ class astar(Agent):
                         #generate child node
                         newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                         #set child node cost
-                        newNode.set_cost(heurVal['rotate'])
+                        newNode.setCost(heurVal['rotate'])
                         newNode.setScanned(False)
                         #append to open list
                         openList.append(newNode)
@@ -211,7 +211,7 @@ class astar(Agent):
                             #generate child node
                             newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                             #set child node cost
-                            newNode.set_cost(heurVal['rotate'])
+                            newNode.setCost(heurVal['rotate'])
                             newNode.setScanned(False)
                             #append to open list
                             openList.append(newNode)
@@ -225,7 +225,7 @@ class astar(Agent):
                             #generate child node
                             newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                             #set child node cost
-                            newNode.set_cost(heurVal['rotate'])
+                            newNode.setCost(heurVal['rotate'])
                             newNode.setScanned(False)
 
                             #append to open list
@@ -238,7 +238,7 @@ class astar(Agent):
                 #generate child node
                 newNode = Node(None, self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], tempMiner.compass, "goal", currentNode)
                 #set child node cost
-                newNode.set_cost(heurVal['goal'])
+                newNode.setCost(heurVal['goal'])
                 goalNode = newNode
                 closedList.append(goalNode)
                 break

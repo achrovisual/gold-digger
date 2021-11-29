@@ -25,16 +25,20 @@ class hdfs(Agent):
             'rotateAwayPit': 0, #avoid at all cost
             'rotateAwayBeacon': 1, #nope
             'rotateAwayEdge': 0, #reached the edge
+            'rotateNoScan': 6,
             'moveToScannedGold': -1, #scan returned gold, let's go!
             'moveToScannedPit': 10, #JUST DON'T
             'moveToNullBeacon': 0, #move if scan returned null
-            'movedAfterNull' : 2 #already moved after scan ret null
+            'movedAfterNull' : 2, #already moved after scan ret null
+            'moveNoScan' : 11,
+            'goal': -5 #we won!
         }
 
         root = Node(None, x, y, miner_compass, None, None)
-        root.set_cost(0)
-        root.setScanned(False)
-        root.setGold(False)
+        root.setCost(heurVal['notScanned'])
+
+        gridSize = self.grid.size
+
         openList = []
         closedList = []
 
@@ -51,15 +55,92 @@ class hdfs(Agent):
             currAction = currentNode.actions
             scannedFront = currentNode.scannedFront
             #deploy actions here
+            if currAction == 'move':
+                self.grid.miner.move()
+                currX = self.grid.miner.coordinates['x']
+                currY = self.grid.miner.coordinates['y']
+            elif currAction == 'scan':
+                retVal = self.grid.smartScan()
+                if retVal == 'P':
+                    currentNode.setPit(True)
+                elif retVal == 'G':
+                    currentNode.setGold(True)
+            elif currAction == 'rotate':
+                self.grid.miner.rotate()
+                currFront = self.grid.miner.compass
+                currentNode.setScanned(False)
+
             checkCurrTile = self.grid.check()
             
-            
-            if not currentNode.scannedGold:
-                if checkCurrTile != 'gold' or checkCurrTile != 'pit':
-                    pass
-                elif checkCurrTile == 'gold':
-                    inGold = True
-            else: #we found the goal node, our only option is to move forward
-                pass
-            
-            closedList.append(currentNode)
+            if currentNode not in closedList:
+                if currentNode.scannedPit:
+                    rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                    rotateNode.setCost(heurVal['rotateAwayPit'])
+
+                    openList.append(rotateNode)
+                elif not currentNode.scannedGold:
+                    if checkCurrTile != 'gold' or checkCurrTile != 'pit':
+                        if (currX >= 0 and currFront !='north') and (currY >= 0 and currFront != 'west'):
+                            if not scannedFront and ((currX != gridSize-1 and currFront!='south') or (currY != gridSize-1 and currFront != 'east')):
+                                scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
+                                scanNode.setScanned(True)
+                                scanNode.setCost(heurVal['alreadyScanned'])
+
+                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                rotateNode.setCost(heurVal['rotateNoScan'])
+
+                                moveNode = Node(None, currX, currY, currFront, "move", currentNode)
+                                moveNode.setCost(heurVal['moveNoScan'])
+
+                                openList.append(moveNode)
+                                openList.append(rotateNode)
+                                openList.append(scanNode)
+                            elif not scannedFront and ((currX == gridSize-1 and currFront =='south') or (currY == gridSize-1 and currFront == 'east')):
+                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                rotateNode.setCost(heurVal['rotateAwayEdge'])
+
+                                openList.append(rotateNode)
+                            elif not scannedFront and ((currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west')):
+                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                rotateNode.setCost(heurVal['rotateAwayEdge'])
+
+                                openList.append(rotateNode)
+
+                            elif scannedFront and ((currX != gridSize-1 and currFront!='south') or (currY != gridSize-1 and currFront != 'east')):
+                                scanNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                scanNode.setScanned(True)
+                                scanNode.setCost(heurVal['alreadyScanned'])
+
+                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                rotateNode.setScanned(True)
+                                rotateNode.setCost(heurVal['rotateAwayEdge'])
+
+                                openList.append(rotateNode if rotateNode.cost < scanNode.cost else scanNode)
+
+                            elif scannedFront and ((currX == gridSize-1 and currFront =='south') or (currY == gridSize-1 and currFront == 'east')):
+                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                rotateNode.setCost(heurVal['rotateAwayEdge'])
+                                rotateNode.setScanned(True)
+
+                                openList.append(rotateNode)
+                            elif scannedFront and ((currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west')):
+                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                rotateNode.setCost(heurVal['rotateAwayEdge'])
+                                rotateNode.setScanned(True)
+
+                                openList.append(rotateNode)
+                elif currentNode.scannedGold: #we found the goal node, our only option is to move forward
+                    moveNode = Node(None, currX, currY, currFront, "move", currentNode)
+                    moveNode.setCost(heurVal['moveToScannedGold'])
+                    moveNode.setGold(True)
+                    openList.append(moveNode)
+                
+                closedList.append(currentNode)
+            if checkCurrTile == 'gold':
+                inGold = True
+                newNode = Node(None, currX, currY, currFront, "goal", currentNode)
+                goalNode = newNode
+            self.grid.show_grid()
+            print(currAction)
+        if inGold:
+            print('found')
