@@ -112,7 +112,7 @@ class astar(Agent):
             print(moveList)
             print(currentNode.cost)
             self.grid.show_grid()
-            if checkCurrTile != ('gold' or 'pit') and (currentNode not in closedList):
+            if (checkCurrTile != 'gold' or checkCurrTile != 'pit') and (currentNode not in closedList):
                 if (currentNode not in closedList) and currentNode.scannedFront == False:
                     #we are in the middle of the grid OR we are in the edge of the grid but we're 
                     #not facing the wall
