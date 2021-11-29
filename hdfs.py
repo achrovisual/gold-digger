@@ -2,7 +2,7 @@ from agent import Agent
 from node import Node
 from grid import Grid
 
-class gbfs(Agent):
+class hdfs(Agent):
     def __init__(self, grid):
         self.grid = grid
         self.start()
