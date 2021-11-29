@@ -7,14 +7,15 @@ class Node():
         self.actions = actions
         self.parent = parent
         self.cost = None
-        
+
         self.scannedFront = False #we use this value to ensure that we only scan once in the direction we're facing
         self.scannedGold = False
         self.scannedNull = False 
         self.scannedPit = False
 
         self.moveToNull = False
-    def set_cost(self, cost):
+        
+    def setCost(self, cost):
         self.cost = int(cost)
     
     def setScanned(self, value):
