@@ -29,9 +29,9 @@ class astar(Agent):
         #heuristic values
 
         heurVal = {
-            'move': 1,
-            'rotate': 2, #we make rotate expensive in the worst-case that upon scan, we found a pit
-            'scan': -1,
+            'move': 2,
+            'rotate': 2, 
+            'scan': 1,
             'goal': 0
         }
 
@@ -60,9 +60,9 @@ class astar(Agent):
             ##################################### CURRENT NODE ACTION ################################################
             if currAction == 'scan':
                 #perform scan operation here
-                scanVal = self.grid.scan()
+                scanVal = self.grid.astarScan()
                 #if the value returned is pit, rotate and avert a game over
-                if scanVal == 'pit':
+                if scanVal == 'P':
                     #reassign reference of previously generated node
                     tempNode = newNode
                     #rotate copied miner
@@ -86,14 +86,13 @@ class astar(Agent):
                     tempNode = newNode
                     #rotate copied miner
                     self.grid.miner.rotate()
-                    #reassign miner reference
-                    tempMiner = self.grid.miner
                     #generate child node
                     newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", tempNode)
                     #set child node cost
                     newNode.set_cost(heurVal['rotate'])
                     #append to closed list since we have to do this immediately
                     closedList.append(newNode)
+
                     currFront = self.grid.miner.compass
                     currAction = 'rotate'
                     currentNode.scannedFront = False
@@ -131,6 +130,15 @@ class astar(Agent):
                         #add child node to open list
                         openList.append(newNode)
                         
+                        tempMiner = self.grid.miner
+                        #generate child node
+                        newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
+                        #set child node cost
+                        newNode.set_cost(heurVal['rotate'])
+                        newNode.setScanned(False)
+                        #append to open list
+                        openList.append(newNode)
+
                         ##################################### MOVE NODE ################################################
 
                         #generate child node
@@ -149,7 +157,7 @@ class astar(Agent):
                             #self.miner.rotate()
                             tempMiner = self.grid.miner
                             #generate child node
-                            newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", tempNode)
+                            newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                             #set child node cost
                             newNode.set_cost(heurVal['rotate'])
                             newNode.setScanned(False)
@@ -163,7 +171,7 @@ class astar(Agent):
                             #self.grid.miner.rotate()
                             tempMiner = self.grid.miner
                             #generate child node
-                            newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", tempNode)
+                            newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                             #set child node cost
                             newNode.set_cost(heurVal['rotate'])
                             newNode.setScanned(False)
@@ -185,6 +193,16 @@ class astar(Agent):
                         newNode.setScanned(True)
                         #append to open list
                         openList.append(newNode)
+
+                        tempMiner = self.grid.miner
+                        #generate child node
+                        newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
+                        #set child node cost
+                        newNode.set_cost(heurVal['rotate'])
+                        newNode.setScanned(False)
+                        #append to open list
+                        openList.append(newNode)
+
                     elif  (self.grid.miner.coordinates['x']  == gridSize-1 or self.grid.miner.coordinates['y'] == gridSize-1):
                         #We are at the souther/eastern edge of the grid and we're facing the wall
                         if ((self.grid.miner.coordinates['x'] == gridSize-1 and currFront == 'south') or (self.grid.miner.coordinates['y'] == gridSize-1 and currFront == 'east')):
@@ -192,7 +210,7 @@ class astar(Agent):
                             #generate reassigned reference of miner
                             tempMiner = self.grid.miner
                             #generate child node
-                            newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", tempNode)
+                            newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                             #set child node cost
                             newNode.set_cost(heurVal['rotate'])
                             newNode.setScanned(False)
@@ -206,7 +224,7 @@ class astar(Agent):
                             #generate reassigned reference of miner
                             tempMiner = self.grid.miner
                             #generate child node
-                            newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", tempNode)
+                            newNode = Node(None,self.grid.miner.coordinates['x'], self.grid.miner.coordinates['y'], self.grid.miner.compass, "rotate", currentNode)
                             #set child node cost
                             newNode.set_cost(heurVal['rotate'])
                             newNode.setScanned(False)

@@ -127,3 +127,68 @@ class Grid():
             return "gold"
         else:
             return "null"
+    def astarScan(self):
+        miner_location = self.miner.coordinates
+        miner_compass = self.miner.compass
+        iterator = 0
+        anchor_value = 0
+        return_value = ''
+
+        #lateral movement
+        if miner_compass == 'east':
+            iterator = int(miner_location['y'])
+            anchor_value = int(miner_location['x'])
+
+            while iterator < self.size and (return_value != 'B' or return_value != 'P'):
+                if self.grid[anchor_value][iterator] == 'B':
+                    return_value = 'B'
+                elif self.grid[anchor_value][iterator] == 'G':
+                    return_value = 'G'
+                elif self.grid[anchor_value][iterator] == 'P':
+                    return_value = 'P'
+                iterator += 1
+
+        elif miner_compass == 'west':
+            iterator = int(miner_location['y'])
+            anchor_value = int(miner_location['x'])
+
+            while iterator >= 0 and (return_value != 'B' or return_value != 'P'):
+                if self.grid[anchor_value][iterator] == 'B':
+                    return_value = 'B'
+                elif self.grid[anchor_value][iterator] == 'G':
+                    return_value = 'G'
+                elif self.grid[anchor_value][iterator] == 'P':
+                    return_value = 'P'
+                iterator -= 1
+
+        #longitudinal movement
+        elif miner_compass == 'south':
+            iterator = int(miner_location['x'])
+            anchor_value = int(miner_location['y'])
+
+            while iterator < self.size and (return_value != 'B' or return_value != 'P'):
+                if self.grid[iterator][anchor_value] == 'B':
+                    return_value = 'B'
+                elif self.grid[iterator][anchor_value] == 'G':
+                    return_value = 'G'
+                elif self.grid[iterator][anchor_value] == 'P':
+                    return_value = 'P'
+                iterator += 1
+
+        elif miner_compass == 'north':
+            iterator = int(miner_location['x'])
+            anchor_value = int(miner_location['y'])
+
+            while iterator >= 0 and (return_value != 'B' or return_value != 'P'):
+                if self.grid[iterator][anchor_value] == 'B':
+                    return_value = 'B'
+                elif self.grid[iterator][anchor_value] == 'G':
+                    return_value = 'G'
+                elif self.grid[iterator][anchor_value] == 'P':
+                    return_value = 'P'
+                iterator -= 1
+        else:
+            return return_value
+
+        self.miner.scan(return_value)
+        return return_value
