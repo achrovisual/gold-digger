@@ -139,7 +139,7 @@ class Grid():
 			iterator = int(miner_location['y'])
 			anchor_value = int(miner_location['x'])
 
-			while iterator < self.size and (return_value != 'B' or return_value != 'P'):
+			while iterator < self.size and return_value == '':
 				if self.grid[anchor_value][iterator] == 'B':
 					return_value = 'B'
 				elif self.grid[anchor_value][iterator] == 'G':
@@ -152,7 +152,7 @@ class Grid():
 			iterator = int(miner_location['y'])
 			anchor_value = int(miner_location['x'])
 
-			while iterator >= 0 and (return_value != 'B' or return_value != 'P'):
+			while iterator >= 0 and return_value == '':
 				if self.grid[anchor_value][iterator] == 'B':
 					return_value = 'B'
 				elif self.grid[anchor_value][iterator] == 'G':
@@ -166,7 +166,7 @@ class Grid():
 			iterator = int(miner_location['x'])
 			anchor_value = int(miner_location['y'])
 
-			while iterator < self.size and (return_value != 'B' or return_value != 'P'):
+			while iterator < self.size and return_value == '':
 				if self.grid[iterator][anchor_value] == 'B':
 					return_value = 'B'
 				elif self.grid[iterator][anchor_value] == 'G':
@@ -179,7 +179,7 @@ class Grid():
 			iterator = int(miner_location['x'])
 			anchor_value = int(miner_location['y'])
 
-			while iterator >= 0 and (return_value != 'B' or return_value != 'P'):
+			while iterator >= 0 and return_value == '':
 				if self.grid[iterator][anchor_value] == 'B':
 					return_value = 'B'
 				elif self.grid[iterator][anchor_value] == 'G':
