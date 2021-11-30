@@ -109,7 +109,7 @@ class gbfs(Agent):
                     moveNode.setCost(heurVal['moveToNullBeacon'])
                     
                     openList.append(moveNode)
-                elif not currentNode.scannedGold and not currentNode.moveToNull:
+                elif not currentNode.scannedGold and not currentNode.moveToNull and not currentNode.moveToNull:
                     if checkCurrTile != 'gold' or checkCurrTile != 'pit':
                         if (currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west'):
                             if scannedFront and ((currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west')):
