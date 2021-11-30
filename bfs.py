@@ -3,6 +3,7 @@ from node import Node
 
 from queue import Queue
 from queue import LifoQueue
+from time import sleep
 
 class BFS(Agent):
     def __init__(self, grid):
@@ -46,7 +47,7 @@ class BFS(Agent):
 
             if self.grid.miner.compass == "east":
                 if self.grid.miner.coordinates["y"] + 1 <= self.grid.size - 1:
-                    temp_scan = self.grid.smartScan()
+                    temp_scan = self.grid.scan()
                     actions.append("scan")
 
                     temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"] + 1, "front": self.grid.miner.compass}
@@ -119,7 +120,7 @@ class BFS(Agent):
                 self.grid.miner.compass = "east"
             elif self.grid.miner.compass == "west":
                 if self.grid.miner.coordinates["y"] - 1 >= 0:
-                    temp_scan = self.grid.smartScan()
+                    temp_scan = self.grid.scan()
                     actions.append("scan")
 
                     temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"] - 1, "front": self.grid.miner.compass}
@@ -192,7 +193,7 @@ class BFS(Agent):
                 self.grid.miner.compass = "west"
             elif self.grid.miner.compass == "south":
                 if self.grid.miner.coordinates["x"] + 1 <= self.grid.size - 1:
-                    temp_scan = self.grid.smartScan()
+                    temp_scan = self.grid.scan()
                     actions.append("scan")
 
                     temp_node = {"x": self.grid.miner.coordinates["x"] + 1, "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
@@ -265,7 +266,7 @@ class BFS(Agent):
                 self.grid.miner.compass = "south"
             elif self.grid.miner.compass == "north":
                 if self.grid.miner.coordinates["x"] - 1 >= 0:
-                    temp_scan = self.grid.smartScan()
+                    temp_scan = self.grid.scan()
                     actions.append("scan")
 
                     temp_node = {"x": self.grid.miner.coordinates["x"] - 1, "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
@@ -359,7 +360,9 @@ class BFS(Agent):
                 b = 0
                 c = 0
 
+                sleep(2.5)
                 while not path.empty():
+                    sleep(.25)
                     temp = path.get()
                     self.grid.miner.coordinates["x"] = temp.x
                     self.grid.miner.coordinates["y"] = temp.y
