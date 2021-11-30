@@ -17,7 +17,7 @@ class gbfs(Agent):
         x  = int(miner_location["x"])
         y = int(miner_location["y"])
         miner_compass = self.grid.miner.compass
-
+        """
         #establish heuristic values
         heurVal = {
             'notScanned': 0, #haven't scanned the front yet
@@ -33,10 +33,10 @@ class gbfs(Agent):
             'movedAfterNull' : 2, #already moved after scan ret null
             'moveNoScan' : 11,
             'goal': -5 #we won!
-        }
+        }"""
 
         root = Node(None, x, y, miner_compass, None, None)
-        root.setCost(heurVal['notScanned'])
+        #root.setCost(heurVal['notScanned'])
 
         gridSize = self.grid.size
 
@@ -110,13 +110,13 @@ class gbfs(Agent):
 
                 if currentNode.scannedPit:
                     rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                    rotateNode.setCost(heurVal['rotateAwayPit'])
+                    #rotateNode.setCost(heurVal['rotateAwayPit'])
                     print("rotate away pit")
                     openList.append(rotateNode)
 
                 elif currentNode.scannedGold: #we found the goal node, our only option is to move forward
                     moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                    moveNode.setCost(heurVal['moveToScannedGold'])
+                    #moveNode.setCost(heurVal['moveToScannedGold'])
                     moveNode.setScanned(True)
                     moveNode.setGold(True)
 
@@ -124,14 +124,19 @@ class gbfs(Agent):
                     print("to gold")
                 elif currentNode.moveToNull:
                     moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                    moveNode.setCost(heurVal['moveToNullBeacon'])
+                    #moveNode.setCost(heurVal['moveToNullBeacon'])
                     
                     scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
-                    scanNode.setCost(heurVal['notScanned'])
+                    #scanNode.setCost(heurVal['notScanned'])
 
                     rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                    rotateNode.setCost(heurVal['rotateNoScan'])
+                    #rotateNode.setCost(heurVal['rotateNoScan'])
 
+                    openList.append(moveNode)
+                    openList.append(scanNode)
+                    openList.append(rotateNode)
+
+                    """
                     if(moveNode.cost > scanNode.cost and moveNode.cost > rotateNode.cost):
                         openList.append(moveNode)
                         if(scanNode.cost > rotateNode.cost):
@@ -161,13 +166,13 @@ class gbfs(Agent):
                     rotateNode.setCost(heurVal['rotateAwayEdge'])
                     
                     openList.append(rotateNode)
-                    
+                    """
                 elif not currentNode.scannedGold and not currentNode.moveToNull:
                     if checkCurrTile != 'gold' or checkCurrTile != 'pit':
                         if (currX >= 0) and (currY >= 0 ):# and currFront !='north'         and currFront != 'west'
                             if ((currY == 0 and currFront =='north') or ( currX == 0 and currFront == 'west')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                                rotateNode.setCost(heurVal['rotateAwayEdge'])
+                                #rotateNode.setCost(heurVal['rotateAwayEdge'])
 
                                 openList.append(rotateNode)
                                 print("3 elif")
@@ -175,14 +180,18 @@ class gbfs(Agent):
                             elif not scannedFront and ((currY < gridSize-1 and currFront!='south') or (currX < gridSize-1 and currFront != 'east')):
                                 scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
                                 scanNode.setScanned(True)
-                                scanNode.setCost(heurVal['alreadyScanned'])
+                                #scanNode.setCost(heurVal['alreadyScanned'])
 
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                                rotateNode.setCost(heurVal['rotateNoScan'])
+                                #rotateNode.setCost(heurVal['rotateNoScan'])
 
                                 moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                                moveNode.setCost(heurVal['moveNoScan'])
-
+                                #moveNode.setCost(heurVal['moveNoScan'])
+                                
+                                openList.append(moveNode)
+                                openList.append(rotateNode)
+                                openList.append(scanNode)
+                                """
                                 if(moveNode.cost > scanNode.cost and moveNode.cost > rotateNode.cost):
                                     openList.append(moveNode)
                                     if(scanNode.cost > rotateNode.cost):
@@ -207,30 +216,34 @@ class gbfs(Agent):
                                     else:
                                         openList.append(scanNode)
                                         openList.append(moveNode)
+                                """
                                 print("1 elif")
-
 
                             elif scannedFront and ((currY < gridSize-1 and currFront!='south') or (currX < gridSize-1 and currFront != 'east')):
 
                                 moveNode = Node(None, currX, currY, currFront, "move", currentNode)
                                 moveNode.setScanned(True)
-                                moveNode.setCost(heurVal['movedAfterNull'])
+                                #moveNode.setCost(heurVal['movedAfterNull'])
 
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setScanned(False)
-                                rotateNode.setCost(heurVal['rotateAwayNull'])
+                                #rotateNode.setCost(heurVal['rotateAwayNull'])
 
+                                """
                                 if rotateNode.cost > moveNode.cost:
                                     openList.append(rotateNode)
                                     openList.append(moveNode)
                                 else:
                                     openList.append(moveNode)
-                                    openList.append(rotateNode)
+                                    openList.append(rotateNode)"""
+                                
+                                openList.append(rotateNode)
+                                openList.append(moveNode)
                                 print("4 elif")
 
                             elif ((currY == gridSize-1 and currFront =='south') or (currX == gridSize-1 and currFront == 'east')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                                rotateNode.setCost(heurVal['rotateAwayEdge'])
+                                #rotateNode.setCost(heurVal['rotateAwayEdge'])
 
                                 openList.append(rotateNode)
                                 print("2 elif")
