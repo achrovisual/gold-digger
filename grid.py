@@ -66,7 +66,7 @@ class Grid():
 		x = object.coordinates.get("x")
 		y = object.coordinates.get("y")
 
-		self.grid[x][y] = object.name[0]
+		self.grid[y][x] = object.name[0]
 
 	def draw_grid(self):
 		tileSize = width // self.size
@@ -76,8 +76,8 @@ class Grid():
 			pygame.draw.line(self.screen, DARKGREY, (0, i * tileSize), (width, i * tileSize))
 			for j in range(self.size):
 				pygame.draw.line(self.screen, DARKGREY, (j * tileSize, 0), (j * tileSize, width))
-				x = i * tileSize
-				y = j * tileSize
+				y = i * tileSize
+				x = j * tileSize
 
 				if self.grid[i][j] == 'P': # Pit
 					# pygame.draw.rect(self.screen, RED, [x+3, y+3, tileSize-3, tileSize-3])
@@ -136,8 +136,8 @@ class Grid():
 
 		#lateral movement
 		if miner_compass == 'east':
-			iterator = int(miner_location['x'])
-			anchor_value = int(miner_location['y'])
+			iterator = int(miner_location['y'])
+			anchor_value = int(miner_location['x'])
 
 			while iterator < self.size and return_value == '':
 				if self.grid[anchor_value][iterator] == 'B':
@@ -149,8 +149,8 @@ class Grid():
 				iterator += 1
 
 		elif miner_compass == 'west':
-			iterator = int(miner_location['x'])
-			anchor_value = int(miner_location['y'])
+			iterator = int(miner_location['y'])
+			anchor_value = int(miner_location['x'])
 
 			while iterator >= 0 and return_value == '':
 				if self.grid[anchor_value][iterator] == 'B':
@@ -163,8 +163,8 @@ class Grid():
 
 		#longitudinal movement
 		elif miner_compass == 'south':
-			iterator = int(miner_location['y'])
-			anchor_value = int(miner_location['x'])
+			iterator = int(miner_location['x'])
+			anchor_value = int(miner_location['y'])
 
 			while iterator < self.size and return_value == '':
 				if self.grid[iterator][anchor_value] == 'B':
@@ -176,8 +176,8 @@ class Grid():
 				iterator += 1
 
 		elif miner_compass == 'north':
-			iterator = int(miner_location['y'])
-			anchor_value = int(miner_location['x'])
+			iterator = int(miner_location['x'])
+			anchor_value = int(miner_location['y'])
 
 			while iterator >= 0 and return_value == '':
 				if self.grid[iterator][anchor_value] == 'B':
