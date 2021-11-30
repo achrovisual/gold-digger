@@ -13,11 +13,15 @@ class Node():
         self.scannedNull = False 
         self.scannedPit = False
 
+        self.reachedEdge = False
         self.moveToNull = False
         
     def setCost(self, cost):
         self.cost = int(cost)
     
+    def setEdge(self, value):
+        self.reachedEdge = value
+
     def setScanned(self, value):
         self.scannedFront = value
         
