@@ -10,17 +10,17 @@ class Miner(Object):
 
     def move(self):
         # Update coordinates here
-        if self.compass == 'east' and self.coordinates['y'] + 1 <= self.size - 1: #add a condition that not at the edge of the map
-            self.coordinates['y'] += 1
+        if self.compass == 'east' and self.coordinates['x'] + 1 <= self.size - 1: #add a condition that not at the edge of the map
+            self.coordinates['x'] += 1
             return True
-        elif self.compass=='north' and self.coordinates['x'] - 1 >= 0:
-            self.coordinates['x'] -= 1
-            return True
-        elif self.compass=='west' and self.coordinates['y'] - 1 >= 0:
+        elif self.compass=='north' and self.coordinates['y'] - 1 >= 0:
             self.coordinates['y'] -= 1
             return True
-        elif self.compass=='south' and self.coordinates['x'] + 1 <= self.size - 1: #add a condition that not at the edge of the map
-            self.coordinates['x'] += 1
+        elif self.compass=='west' and self.coordinates['x'] - 1 >= 0:
+            self.coordinates['x'] -= 1
+            return True
+        elif self.compass=='south' and self.coordinates['y'] + 1 <= self.size - 1: #add a condition that not at the edge of the map
+            self.coordinates['y'] += 1
             return True
         else:
             print('reached edge')

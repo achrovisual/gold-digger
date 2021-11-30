@@ -128,15 +128,15 @@ class gbfs(Agent):
                     
                 elif not currentNode.scannedGold and not currentNode.moveToNull:
                     if checkCurrTile != 'gold' or checkCurrTile != 'pit':
-                        if (currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west'):
-                            if scannedFront and ((currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west')):
+                        if (currY == 0 and currFront =='north') or (currX == 0 and currFront == 'west'):
+                            if scannedFront and ((currY == 0 and currFront =='north') or ( currX == 0 and currFront == 'west')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
                                 rotateNode.setScanned(False)
 
                                 openList.append(rotateNode)
                                 print("6 elif")
-                            elif not scannedFront and ((currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west')):
+                            elif not scannedFront and ((currY == 0 and currFront =='north') or (currX == 0 and currFront == 'west')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
 
@@ -147,7 +147,7 @@ class gbfs(Agent):
                                 print("3 elif")
                             
                         elif (currX >= 0) and (currY >= 0 ):# and currFront !='north'         and currFront != 'west'
-                            if not scannedFront and ((currX < gridSize-1 and currFront!='south') or (currY < gridSize-1 and currFront != 'east')):
+                            if not scannedFront and ((currY < gridSize-1 and currFront!='south') or (currX < gridSize-1 and currFront != 'east')):
                                 scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
                                 scanNode.setScanned(True)
                                 scanNode.setCost(heurVal['alreadyScanned'])
@@ -163,7 +163,7 @@ class gbfs(Agent):
                                 print("1 elif")
 
 
-                            elif scannedFront and ((currX < gridSize-1 and currFront!='south') or (currY < gridSize-1 and currFront != 'east')):
+                            elif scannedFront and ((currY < gridSize-1 and currFront!='south') or (currX < gridSize-1 and currFront != 'east')):
 
                                 moveNode = Node(None, currX, currY, currFront, "move", currentNode)
                                 moveNode.setScanned(True)
@@ -176,7 +176,7 @@ class gbfs(Agent):
                                 openList.append(moveNode)
                                 print("4 elif")
 
-                            elif not scannedFront and ((currX == gridSize-1 and currFront =='south') or (currY == gridSize-1 and currFront == 'east')):
+                            elif not scannedFront and ((currY == gridSize-1 and currFront =='south') or (currX == gridSize-1 and currFront == 'east')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
 
@@ -186,7 +186,7 @@ class gbfs(Agent):
                                 openList.append(rotateNode)
                                 print("2 elif")
 
-                            elif scannedFront and ((currX == gridSize-1 and currFront =='south') or (currY == gridSize-1 and currFront == 'east')):
+                            elif scannedFront and ((currY == gridSize-1 and currFront =='south') or (currX == gridSize-1 and currFront == 'east')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
                                 rotateNode.setScanned(False)
