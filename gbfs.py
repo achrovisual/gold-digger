@@ -74,6 +74,13 @@ class gbfs(Agent):
 
             checkCurrTile = self.grid.check()
             checkPass = False
+            
+            if checkCurrTile == 'gold':
+                inGold = True
+                newNode = Node(None, currX, currY, currFront, "goal", currentNode)
+                goalNode = newNode
+
+                break
 
             for x in closedList:
                 if(currX == x.x and currY == x.y and currFront == x.front and currAction == x.actions):
@@ -107,40 +114,48 @@ class gbfs(Agent):
                                 openList.append(rotateNode)
                                 openList.append(scanNode)
                                 print("1 elif")
+
                             elif not scannedFront and ((currX == gridSize-1 and currFront =='south') or (currY == gridSize-1 and currFront == 'east')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
 
                                 openList.append(rotateNode)
                                 print("2 elif")
+
                             elif not scannedFront and ((currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
 
                                 openList.append(rotateNode)
                                 print("3 elif")
+
                             elif scannedFront and ((currX != gridSize-1 and currFront!='south') or (currY != gridSize-1 and currFront != 'east')):
-                                scanNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
                                 scanNode.setScanned(True)
                                 scanNode.setCost(heurVal['alreadyScanned'])
 
-                                moveNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                moveNode = Node(None, currX, currY, currFront, "move", currentNode)
                                 moveNode.setScanned(True)
                                 moveNode.setCost(heurVal['movedAfterNull'])
 
+                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                                rotateNode.setScanned(False)
+
+                                openList.append(rotateNode)
                                 openList.append(moveNode)
                                 print("4 elif")
+
                             elif scannedFront and ((currX == gridSize-1 and currFront =='south') or (currY == gridSize-1 and currFront == 'east')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
-                                rotateNode.setScanned(True)
+                                rotateNode.setScanned(False)
 
                                 openList.append(rotateNode)
                                 print("5 elif")
                             elif scannedFront and ((currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west')):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
-                                rotateNode.setScanned(True)
+                                rotateNode.setScanned(False)
 
                                 openList.append(rotateNode)
                                 print("6 elif")
@@ -151,10 +166,7 @@ class gbfs(Agent):
                     openList.append(moveNode)
                 
                 closedList.append(currentNode)
-            if checkCurrTile == 'gold':
-                inGold = True
-                newNode = Node(None, currX, currY, currFront, "goal", currentNode)
-                goalNode = newNode
+            
             self.grid.show_grid()
             print(currAction)
         if inGold:
