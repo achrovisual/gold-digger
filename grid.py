@@ -108,7 +108,7 @@ class Grid():
 		elif self.miner.compass == 'west':
 			gold_img = pygame.image.load("./icons/minerW.png")
 		gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-		self.screen.blit(gold_img, (self.miner.coordinates.get('y')*tileSize, self.miner.coordinates.get('x')*tileSize))
+		self.screen.blit(gold_img, (self.miner.coordinates.get('x')*tileSize, self.miner.coordinates.get('y')*tileSize))
 
 	def check(self):
 		miner_location = self.miner.coordinates

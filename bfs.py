@@ -46,158 +46,12 @@ class BFS(Agent):
             actions2 = []
 
             if self.grid.miner.compass == "east":
-                if self.grid.miner.coordinates["y"] + 1 <= self.grid.size - 1:
-                    temp_scan = self.grid.scan()
-                    actions.append("scan")
-
-                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"] + 1, "front": self.grid.miner.compass}
-                    visited = True if visited_nodes.count(temp_node) > 0 else False
-                    if not visited:
-                        if temp_scan == "" or temp_scan == "B":
-                            if self.grid.miner.move():
-                                actions.append("move")
-
-                            node_counter += 1
-                            visited_nodes.append(temp_node)
-                            child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
-                            node_queue.put(child)
-                        elif temp_scan == "P":
-                            if self.grid.miner.move():
-                                actions.append("move")
-
-                            temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
-                            visited = True if visited_nodes.count(temp_node) > 0 else False
-
-                            if not visited:
-                                node_counter += 1
-                                visited_nodes.append(temp_node)
-                                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
-                                node_queue.put(child)
-                        elif temp_scan == "G":
-                            if self.grid.miner.move():
-                                actions.append("move")
-
-                            if self.grid.check() == 'gold':
-                                solvable = True
-
-                                node_counter += 1
-                                visited_nodes.append(temp_node)
-                                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
-                                node_queue.put(child)
-
-                                goal = child
-                                solving = False
-
-                elif self.grid.miner.coordinates["y"] + 1 > self.grid.size - 1:
-                    if self.grid.miner.rotate():
-                        actions2.append("rotate")
-
-                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
-                    visited = True if visited_nodes.count(temp_node) > 0 else False
-
-                    if not visited:
-                        node_counter += 1
-                        visited_nodes.append(temp_node)
-                        child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
-                        node_queue.put(child)
-
-                self.grid.miner.coordinates["x"] = current.x
-                self.grid.miner.coordinates["y"] = current.y
-
-                if self.grid.miner.rotate():
-                    actions2.append("rotate")
-
-                temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
-                visited = True if visited_nodes.count(temp_node) > 0 else False
-
-                if not visited:
-                    node_counter += 1
-                    visited_nodes.append(temp_node)
-                    child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
-                    node_queue.put(child)
-
-                self.grid.miner.compass = "east"
-            elif self.grid.miner.compass == "west":
-                if self.grid.miner.coordinates["y"] - 1 >= 0:
-                    temp_scan = self.grid.scan()
-                    actions.append("scan")
-
-                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"] - 1, "front": self.grid.miner.compass}
-                    visited = True if visited_nodes.count(temp_node) > 0 else False
-
-                    if not visited:
-                        if temp_scan == "" or temp_scan == "B":
-                            if self.grid.miner.move():
-                                actions.append("move")
-
-                            node_counter += 1
-                            visited_nodes.append(temp_node)
-                            child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
-                            node_queue.put(child)
-                        elif temp_scan == "P":
-                            if self.grid.miner.move():
-                                actions.append("move")
-
-                            temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
-                            visited = True if visited_nodes.count(temp_node) > 0 else False
-
-                            if not visited:
-                                node_counter += 1
-                                visited_nodes.append(temp_node)
-                                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
-                                node_queue.put(child)
-                        elif temp_scan == "G":
-                            if self.grid.miner.move():
-                                actions.append("move")
-
-                            if self.grid.check() == 'gold':
-                                solvable = True
-
-                                node_counter += 1
-                                visited_nodes.append(temp_node)
-                                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
-                                node_queue.put(child)
-
-                                goal = child
-                                solving = False
-
-                elif self.grid.miner.coordinates["y"] - 1 < 0:
-                    if self.grid.miner.rotate():
-                        actions2.append("rotate")
-
-                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
-                    visited = True if visited_nodes.count(temp_node) > 0 else False
-
-                    if not visited:
-                        node_counter += 1
-                        visited_nodes.append(temp_node)
-                        child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
-                        node_queue.put(child)
-
-                self.grid.miner.coordinates["x"] = current.x
-                self.grid.miner.coordinates["y"] = current.y
-
-                if self.grid.miner.rotate():
-                    actions2.append("rotate")
-
-                temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
-                visited = True if visited_nodes.count(temp_node) > 0 else False
-
-                if not visited:
-                    node_counter += 1
-                    visited_nodes.append(temp_node)
-                    child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
-                    node_queue.put(child)
-
-                self.grid.miner.compass = "west"
-            elif self.grid.miner.compass == "south":
                 if self.grid.miner.coordinates["x"] + 1 <= self.grid.size - 1:
                     temp_scan = self.grid.scan()
                     actions.append("scan")
 
                     temp_node = {"x": self.grid.miner.coordinates["x"] + 1, "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
                     visited = True if visited_nodes.count(temp_node) > 0 else False
-
                     if not visited:
                         if temp_scan == "" or temp_scan == "B":
                             if self.grid.miner.move():
@@ -262,8 +116,8 @@ class BFS(Agent):
                     child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
                     node_queue.put(child)
 
-                self.grid.miner.compass = "south"
-            elif self.grid.miner.compass == "north":
+                self.grid.miner.compass = "east"
+            elif self.grid.miner.compass == "west":
                 if self.grid.miner.coordinates["x"] - 1 >= 0:
                     temp_scan = self.grid.scan()
                     actions.append("scan")
@@ -296,7 +150,153 @@ class BFS(Agent):
                             if self.grid.miner.move():
                                 actions.append("move")
 
+                            if self.grid.check() == 'gold':
+                                solvable = True
+
+                                node_counter += 1
+                                visited_nodes.append(temp_node)
+                                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                                node_queue.put(child)
+
+                                goal = child
+                                solving = False
+
                 elif self.grid.miner.coordinates["x"] - 1 < 0:
+                    if self.grid.miner.rotate():
+                        actions2.append("rotate")
+
+                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                    visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                    if not visited:
+                        node_counter += 1
+                        visited_nodes.append(temp_node)
+                        child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
+                        node_queue.put(child)
+
+                self.grid.miner.coordinates["x"] = current.x
+                self.grid.miner.coordinates["y"] = current.y
+
+                if self.grid.miner.rotate():
+                    actions2.append("rotate")
+
+                temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                if not visited:
+                    node_counter += 1
+                    visited_nodes.append(temp_node)
+                    child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
+                    node_queue.put(child)
+
+                self.grid.miner.compass = "west"
+            elif self.grid.miner.compass == "south":
+                if self.grid.miner.coordinates["y"] + 1 <= self.grid.size - 1:
+                    temp_scan = self.grid.scan()
+                    actions.append("scan")
+
+                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"] + 1, "front": self.grid.miner.compass}
+                    visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                    if not visited:
+                        if temp_scan == "" or temp_scan == "B":
+                            if self.grid.miner.move():
+                                actions.append("move")
+
+                            node_counter += 1
+                            visited_nodes.append(temp_node)
+                            child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                            node_queue.put(child)
+                        elif temp_scan == "P":
+                            if self.grid.miner.move():
+                                actions.append("move")
+
+                            temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                            visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                            if not visited:
+                                node_counter += 1
+                                visited_nodes.append(temp_node)
+                                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                                node_queue.put(child)
+                        elif temp_scan == "G":
+                            if self.grid.miner.move():
+                                actions.append("move")
+
+                            if self.grid.check() == 'gold':
+                                solvable = True
+
+                                node_counter += 1
+                                visited_nodes.append(temp_node)
+                                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                                node_queue.put(child)
+
+                                goal = child
+                                solving = False
+
+                elif self.grid.miner.coordinates["y"] + 1 > self.grid.size - 1:
+                    if self.grid.miner.rotate():
+                        actions2.append("rotate")
+
+                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                    visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                    if not visited:
+                        node_counter += 1
+                        visited_nodes.append(temp_node)
+                        child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
+                        node_queue.put(child)
+
+                self.grid.miner.coordinates["x"] = current.x
+                self.grid.miner.coordinates["y"] = current.y
+
+                if self.grid.miner.rotate():
+                    actions2.append("rotate")
+
+                temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                if not visited:
+                    node_counter += 1
+                    visited_nodes.append(temp_node)
+                    child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions2, current)
+                    node_queue.put(child)
+
+                self.grid.miner.compass = "south"
+            elif self.grid.miner.compass == "north":
+                if self.grid.miner.coordinates["y"] - 1 >= 0:
+                    temp_scan = self.grid.scan()
+                    actions.append("scan")
+
+                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"] - 1, "front": self.grid.miner.compass}
+                    visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                    if not visited:
+                        if temp_scan == "" or temp_scan == "B":
+                            if self.grid.miner.move():
+                                actions.append("move")
+
+                            node_counter += 1
+                            visited_nodes.append(temp_node)
+                            child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                            node_queue.put(child)
+                        elif temp_scan == "P":
+                            if self.grid.miner.move():
+                                actions.append("move")
+
+                            temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                            visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                            if not visited:
+                                node_counter += 1
+                                visited_nodes.append(temp_node)
+                                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                                node_queue.put(child)
+                        elif temp_scan == "G":
+                            if self.grid.miner.move():
+                                actions.append("move")
+
+                elif self.grid.miner.coordinates["y"] - 1 < 0:
                     if self.grid.miner.rotate():
                         actions2.append("rotate")
 
