@@ -63,7 +63,7 @@ class gbfs(Agent):
                 currentNode.x = currX
                 currentNode.y = currY
             elif currAction == 'scan':
-                retVal = self.grid.smartScan()
+                retVal = self.grid.scan()
                 if retVal == 'P':
                     currentNode.setPit(True)
                 elif retVal == 'G':
@@ -82,7 +82,7 @@ class gbfs(Agent):
             
             checkCurrTile = self.grid.check()
             checkPass = False
-            
+
             if checkCurrTile == 'gold':
                 inGold = True
                 newNode = Node(None, currX, currY, currFront, "goal", currentNode)
@@ -97,7 +97,7 @@ class gbfs(Agent):
             for x in closedList:
                 if(currX == x.x and currY == x.y and currFront == x.front and currAction == x.actions):
                     checkPass = True
-            
+
             if not checkPass and not breaker:
                 if currentNode.scannedPit:
                     rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
@@ -156,7 +156,7 @@ class gbfs(Agent):
                                 openList.append(scanNode)
                                 print("1 elif")
 
-                            
+
                             elif scannedFront and ((currX < gridSize-1 and currFront!='south') or (currY < gridSize-1 and currFront != 'east')):
 
                                 moveNode = Node(None, currX, currY, currFront, "move", currentNode)
@@ -187,9 +187,9 @@ class gbfs(Agent):
 
                                 openList.append(rotateNode)
                                 print("5 elif")
-                            
-                
-                
+
+
+
                 closedList.append(currentNode)
             
             
@@ -199,4 +199,3 @@ class gbfs(Agent):
             print('found')
         if inPit:
             print("landed in pit")
-        
