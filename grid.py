@@ -136,8 +136,8 @@ class Grid():
 
 		#lateral movement
 		if miner_compass == 'east':
-			iterator = int(miner_location['y'])
-			anchor_value = int(miner_location['x'])
+			iterator = int(miner_location['x'])
+			anchor_value = int(miner_location['y'])
 
 			while iterator < self.size and return_value == '':
 				if self.grid[anchor_value][iterator] == 'B':
@@ -149,8 +149,8 @@ class Grid():
 				iterator += 1
 
 		elif miner_compass == 'west':
-			iterator = int(miner_location['y'])
-			anchor_value = int(miner_location['x'])
+			iterator = int(miner_location['x'])
+			anchor_value = int(miner_location['y'])
 
 			while iterator >= 0 and return_value == '':
 				if self.grid[anchor_value][iterator] == 'B':
@@ -163,8 +163,8 @@ class Grid():
 
 		#longitudinal movement
 		elif miner_compass == 'south':
-			iterator = int(miner_location['x'])
-			anchor_value = int(miner_location['y'])
+			iterator = int(miner_location['y'])
+			anchor_value = int(miner_location['x'])
 
 			while iterator < self.size and return_value == '':
 				if self.grid[iterator][anchor_value] == 'B':
@@ -176,8 +176,8 @@ class Grid():
 				iterator += 1
 
 		elif miner_compass == 'north':
-			iterator = int(miner_location['x'])
-			anchor_value = int(miner_location['y'])
+			iterator = int(miner_location['y'])
+			anchor_value = int(miner_location['x'])
 
 			while iterator >= 0 and return_value == '':
 				if self.grid[iterator][anchor_value] == 'B':

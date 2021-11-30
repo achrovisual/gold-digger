@@ -75,6 +75,7 @@ class BFS(Agent):
                                 node_queue.put(child)
                         elif temp_scan == "G":
                             if self.grid.miner.move():
+                                print('moving towards gold', self.grid.miner.coordinates)
                                 actions.append("move")
 
                             if self.grid.check() == 'gold':
@@ -341,6 +342,7 @@ class BFS(Agent):
                 solving = False
                 print('i am in da pit')
 
+            print(self.grid.miner.coordinates, self.grid.miner.compass, self.grid.scan())
             self.grid.show_grid()
             if solvable:
                 print("search success")
