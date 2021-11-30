@@ -48,7 +48,8 @@ class gbfs(Agent):
         goalNode = None
         inGold = False
         inPit = False
-        while openList and not inGold and not inPit:
+        inBeacon = False
+        while openList and not inGold and not inPit and not inBeacon:
             currentNode = openList.pop()
             currFront = currentNode.front
             currX = currentNode.x
@@ -72,6 +73,8 @@ class gbfs(Agent):
                     print('scanned pit')
                 elif retVal == 'G':
                     currentNode.setGold(True)
+                elif retVal == 'B':
+                    currentNode.setBeacon(True)
                 else:
                     currentNode.moveToNullBeacon(True)
             elif currAction == 'rotate':
@@ -98,7 +101,11 @@ class gbfs(Agent):
                 newNode = Node(None, currX, currY, currFront, "pit", currentNode)
                 goalNode = newNode
                 breaker = True
-
+            if checkCurrTile == 'beacon':
+                breaker = True
+                inBeacon = True
+                newNode = Node(None, currX, currY, currFront, 'in beacon', currentNode)
+                openList.append(newNode)
             for x in closedList:
                 if(currX == x.x and currY == x.y and currFront == x.front and currAction == x.actions):
                     checkPass = True
@@ -122,6 +129,13 @@ class gbfs(Agent):
 
                     openList.append(moveNode)
                     print("to gold")
+                elif currentNode.scannedBeacon:
+                    moveNode = Node(None, currX, currY, currFront, "move", currentNode)
+                    #moveNode.setCost(heurVal['moveToScannedGold'])
+                    moveNode.setScanned(True)
+                    moveNode.setGold(True)
+
+                    openList.append(moveNode)
                 elif currentNode.moveToNull:
                     moveNode = Node(None, currX, currY, currFront, "move", currentNode)
                     #moveNode.setCost(heurVal['moveToNullBeacon'])
@@ -254,3 +268,5 @@ class gbfs(Agent):
             print('found')
         if inPit:
             print("landed in pit")
+        if inBeacon:
+            print("in beacon")
