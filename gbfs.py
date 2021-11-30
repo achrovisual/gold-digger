@@ -118,8 +118,12 @@ class gbfs(Agent):
                     
                     scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
 
-                    openList.append(moveNode)
+                    rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+
                     openList.append(scanNode)
+                    openList.append(rotateNode)
+                    openList.append(moveNode)
+                    
                 elif not currentNode.scannedGold and not currentNode.moveToNull:
                     if checkCurrTile != 'gold' or checkCurrTile != 'pit':
                         if (currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west'):
