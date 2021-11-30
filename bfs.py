@@ -62,8 +62,8 @@ class BFS(Agent):
                             child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
                             node_queue.put(child)
                         elif temp_scan == "P":
-                            if self.grid.miner.rotate():
-                                actions.append("rotate")
+                            if self.grid.miner.move():
+                                actions.append("move")
 
                             temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
                             visited = True if visited_nodes.count(temp_node) > 0 else False
@@ -74,7 +74,6 @@ class BFS(Agent):
                                 child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
                                 node_queue.put(child)
                         elif temp_scan == "G":
-                            print(self.grid.check())
                             if self.grid.miner.move():
                                 actions.append("move")
 
@@ -136,8 +135,8 @@ class BFS(Agent):
                             child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
                             node_queue.put(child)
                         elif temp_scan == "P":
-                            if self.grid.miner.rotate():
-                                actions.append("rotate")
+                            if self.grid.miner.move():
+                                actions.append("move")
 
                             temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
                             visited = True if visited_nodes.count(temp_node) > 0 else False
@@ -209,8 +208,8 @@ class BFS(Agent):
                             child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
                             node_queue.put(child)
                         elif temp_scan == "P":
-                            if self.grid.miner.rotate():
-                                actions.append("rotate")
+                            if self.grid.miner.move():
+                                actions.append("move")
 
                             temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
                             visited = True if visited_nodes.count(temp_node) > 0 else False
@@ -282,8 +281,8 @@ class BFS(Agent):
                             child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
                             node_queue.put(child)
                         elif temp_scan == "P":
-                            if self.grid.miner.rotate():
-                                actions.append("rotate")
+                            if self.grid.miner.move():
+                                actions.append("move")
 
                             temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
                             visited = True if visited_nodes.count(temp_node) > 0 else False
