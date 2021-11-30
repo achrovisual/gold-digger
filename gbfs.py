@@ -237,7 +237,6 @@ class gbfs(Agent):
                 
                 closedList.append(currentNode)
             
-            
         if inGold:
             print('found')
         if inPit:
