@@ -75,7 +75,7 @@ class gbfs(Agent):
 
             checkCurrTile = self.grid.check()
             checkPass = False
-            
+
             if checkCurrTile == 'gold':
                 inGold = True
                 newNode = Node(None, currX, currY, currFront, "goal", currentNode)
@@ -90,7 +90,7 @@ class gbfs(Agent):
             for x in closedList:
                 if(currX == x.x and currY == x.y and currFront == x.front and currAction == x.actions):
                     checkPass = True
-            
+
             if not checkPass and not breaker:
                 if currentNode.scannedPit:
                     rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
@@ -107,7 +107,7 @@ class gbfs(Agent):
                 elif currentNode.moveToNull:
                     moveNode = Node(None, currX, currY, currFront, "move", currentNode)
                     moveNode.setCost(heurVal['moveToNullBeacon'])
-                    
+
                     openList.append(moveNode)
                 elif not currentNode.scannedGold and not currentNode.moveToNull:
                     if checkCurrTile != 'gold' or checkCurrTile != 'pit':
@@ -125,7 +125,7 @@ class gbfs(Agent):
 
                                 openList.append(rotateNode)
                                 print("3 elif")
-                            
+
                         elif (currX >= 0 and currFront !='north') and (currY >= 0 and currFront != 'west'):
                             if not scannedFront and ((currX < gridSize-1 and currFront!='south') or (currY < gridSize-1 and currFront != 'east')):
                                 scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
@@ -142,7 +142,7 @@ class gbfs(Agent):
                                 openList.append(scanNode)
                                 print("1 elif")
 
-                            
+
                             elif scannedFront and ((currX < gridSize-1 and currFront!='south') or (currY < gridSize-1 and currFront != 'east')):
 
                                 moveNode = Node(None, currX, currY, currFront, "move", currentNode)
@@ -170,17 +170,16 @@ class gbfs(Agent):
 
                                 openList.append(rotateNode)
                                 print("5 elif")
-                            
-                
-                
+
+
+
                 closedList.append(currentNode)
-            
-            
+
+
             print(currAction)
             self.grid.show_grid()
-        
+
         if inGold:
             print('found')
         if inPit:
             print("landed in pit")
-        

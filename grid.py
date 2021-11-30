@@ -22,7 +22,7 @@ class Grid():
 		numPits = int(self.size * 0.25)
 		numBeacons = 1 if (self.size * 0.10) < 1 else int(self.size * 0.10)
 		numCount = 0
-		
+
 		# MINER
 		self.miner = Miner("Miner", {"x": 0, "y": 0}, self.size)
 		self.update_grid(self.miner)
@@ -32,9 +32,10 @@ class Grid():
 			x = random.randint(0, self.size-1)
 			y = random.randint(0, self.size-1)
 			gold = Object("Gold", {"x": x, "y": y})
-			if self.grid[x][y] == "Empty":
+			if self.grid[y][x] == "Empty":
 				self.update_grid(gold)
 				numCount += 1
+			print(gold.coordinates)
 		numCount = 0
 
 		# BEACONS
@@ -42,9 +43,10 @@ class Grid():
 			x = random.randint(0, self.size-1)
 			y = random.randint(0, self.size-1)
 			beacon = Object("Beacon", {"x": x, "y": y})
-			if self.grid[x][y] == "Empty":
+			if self.grid[y][x] == "Empty":
 				self.update_grid(beacon)
 				numCount += 1
+			print(beacon.coordinates)
 		numCount = 0
 
 		# PITS
@@ -52,9 +54,10 @@ class Grid():
 			x = random.randint(0, self.size-1)
 			y = random.randint(0, self.size-1)
 			pit = Object("Pit", {"x": x, "y": y})
-			if self.grid[x][y] == "Empty":
+			if self.grid[y][x] == "Empty":
 				self.update_grid(pit)
 				numCount += 1
+			print(pit.coordinates)
 
 		self.draw_grid()
 		pygame.display.update()
@@ -68,45 +71,45 @@ class Grid():
 	def draw_grid(self):
 		tileSize = width // self.size
 		self.screen.fill(LIGHTGREY)
-		
+
 		for i in range(self.size):
 			pygame.draw.line(self.screen, DARKGREY, (0, i * tileSize), (width, i * tileSize))
 			for j in range(self.size):
 				pygame.draw.line(self.screen, DARKGREY, (j * tileSize, 0), (j * tileSize, width))
 				x = i * tileSize
 				y = j * tileSize
-				
+
 				if self.grid[i][j] == 'P': # Pit
 					# pygame.draw.rect(self.screen, RED, [x+3, y+3, tileSize-3, tileSize-3])
-					gold_img = pygame.image.load("icons\manhole.png")
+					gold_img = pygame.image.load("./icons/manhole.png")
 					gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-					self.screen.blit(gold_img, (y, x))
+					self.screen.blit(gold_img, (x, y))
 				elif self.grid[i][j] == 'B': # Beacon
 					# pygame.draw.rect(self.screen, GREEN, [x+3, y+3, tileSize-3, tileSize-3])
-					gold_img = pygame.image.load("icons\lighthouse.png")
+					gold_img = pygame.image.load("./icons/lighthouse.png")
 					gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-					self.screen.blit(gold_img, (y, x))
+					self.screen.blit(gold_img, (x, y))
 				elif self.grid[i][j] == 'G': # Gold
 					# pygame.draw.rect(self.screen, YELLOW, [x+3, y+3, tileSize-3, tileSize-3])
-					gold_img = pygame.image.load("icons\gold.png")
+					gold_img = pygame.image.load("./icons/gold.png")
 					gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-					self.screen.blit(gold_img, (y, x))
+					self.screen.blit(gold_img, (x, y))
 				# else: # Empty
 				# 	pygame.draw.rect(self.screen, BLACK, [x+3, y+3, tileSize-3, tileSize-3])
 
 		# Draw Miner position
 		gold_img = None
 		if self.miner.compass == 'north':
-			gold_img = pygame.image.load("icons\minerN.png")
+			gold_img = pygame.image.load("./icons/minerN.png")
 		elif self.miner.compass == 'east':
-			gold_img = pygame.image.load("icons\minerE.png")
+			gold_img = pygame.image.load("./icons/minerE.png")
 		elif self.miner.compass == 'south':
-			gold_img = pygame.image.load("icons\minerS.png")
+			gold_img = pygame.image.load("./icons/minerS.png")
 		elif self.miner.compass == 'west':
-			gold_img = pygame.image.load("icons\minerW.png")
+			gold_img = pygame.image.load("./icons/minerW.png")
 		gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
 		self.screen.blit(gold_img, (self.miner.coordinates.get('y')*tileSize, self.miner.coordinates.get('x')*tileSize))
-		
+
 	def scan(self):
 		miner_location = self.miner.coordinates
 		miner_compass = self.miner.compass
@@ -186,11 +189,11 @@ class Grid():
 		if x < 0 or x >= self.size or y < 0 or y >= self.size:
 			return "out"
 
-		if self.grid[x][y] == 'B':
+		if self.grid[y][x] == 'B':
 			return "beacon"
-		elif self.grid[x][y] == 'P':
+		elif self.grid[y][x] == 'P':
 			return "pit"
-		elif self.grid[x][y] == 'G':
+		elif self.grid[y][x] == 'G':
 			return "gold"
 		else:
 			return "null"
