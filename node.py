@@ -12,10 +12,13 @@ class Node():
         self.scannedGold = False
         self.scannedNull = False 
         self.scannedPit = False
+        self.scannedBeacon = False
 
         self.reachedEdge = False
         self.moveToNull = False
-        
+    
+    def setBeacon(self, value):
+        self.scannedBeacon = value
     def setCost(self, cost):
         self.cost = int(cost)
     
