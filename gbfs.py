@@ -66,6 +66,7 @@ class gbfs(Agent):
                 retVal = self.grid.scan()
                 if retVal == 'P':
                     currentNode.setPit(True)
+                    print('scanned pit')
                 elif retVal == 'G':
                     currentNode.setGold(True)
                 else:
@@ -76,6 +77,7 @@ class gbfs(Agent):
                 currentNode.front = currFront
                 currentNode.setScanned(False)
                 currentNode.setGold(False)
+                currentNode.setPit(False)
                 currentNode.setNull(False)
             print(currAction)
             self.grid.show_grid()
