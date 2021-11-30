@@ -60,6 +60,8 @@ class gbfs(Agent):
                 self.grid.miner.move()
                 currX = self.grid.miner.coordinates['x']
                 currY = self.grid.miner.coordinates['y']
+                currentNode.x = currX
+                currentNode.y = currY
             elif currAction == 'scan':
                 retVal = self.grid.smartScan()
                 if retVal == 'P':
@@ -71,8 +73,13 @@ class gbfs(Agent):
             elif currAction == 'rotate':
                 self.grid.miner.rotate()
                 currFront = self.grid.miner.compass
+                currentNode.front = currFront
                 currentNode.setScanned(False)
-
+                currentNode.setGold(False)
+                currentNode.setNull(False)
+            print(currAction)
+            self.grid.show_grid()
+            
             checkCurrTile = self.grid.check()
             checkPass = False
             
@@ -95,7 +102,7 @@ class gbfs(Agent):
                 if currentNode.scannedPit:
                     rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                     rotateNode.setCost(heurVal['rotateAwayPit'])
-
+                    print("rotate away pit")
                     openList.append(rotateNode)
                 elif currentNode.scannedGold: #we found the goal node, our only option is to move forward
                     moveNode = Node(None, currX, currY, currFront, "move", currentNode)
@@ -104,11 +111,15 @@ class gbfs(Agent):
                     moveNode.setGold(True)
 
                     openList.append(moveNode)
+                    print("to gold")
                 elif currentNode.moveToNull:
                     moveNode = Node(None, currX, currY, currFront, "move", currentNode)
                     moveNode.setCost(heurVal['moveToNullBeacon'])
                     
+                    scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
+
                     openList.append(moveNode)
+                    openList.append(scanNode)
                 elif not currentNode.scannedGold and not currentNode.moveToNull:
                     if checkCurrTile != 'gold' or checkCurrTile != 'pit':
                         if (currX == 0 and currFront =='north') or (currY == 0 and currFront == 'west'):
@@ -123,10 +134,13 @@ class gbfs(Agent):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
 
+                                scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
+
+                                openList.append(scanNode)
                                 openList.append(rotateNode)
                                 print("3 elif")
                             
-                        elif (currX >= 0 and currFront !='north') and (currY >= 0 and currFront != 'west'):
+                        elif (currX >= 0) and (currY >= 0 ):# and currFront !='north'         and currFront != 'west'
                             if not scannedFront and ((currX < gridSize-1 and currFront!='south') or (currY < gridSize-1 and currFront != 'east')):
                                 scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
                                 scanNode.setScanned(True)
@@ -160,6 +174,9 @@ class gbfs(Agent):
                                 rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
                                 rotateNode.setCost(heurVal['rotateAwayEdge'])
 
+                                scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
+
+                                openList.append(scanNode)
                                 openList.append(rotateNode)
                                 print("2 elif")
 
@@ -176,8 +193,7 @@ class gbfs(Agent):
                 closedList.append(currentNode)
             
             
-            print(currAction)
-            self.grid.show_grid()
+            
         
         if inGold:
             print('found')
