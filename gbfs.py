@@ -61,7 +61,7 @@ class gbfs(Agent):
                 currX = self.grid.miner.coordinates['x']
                 currY = self.grid.miner.coordinates['y']
             elif currAction == 'scan':
-                retVal = self.grid.smartScan()
+                retVal = self.grid.scan()
                 if retVal == 'P':
                     currentNode.setPit(True)
                 elif retVal == 'G':
