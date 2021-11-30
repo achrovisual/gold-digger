@@ -2,8 +2,6 @@ from object import Object
 from miner import Miner
 import random, sys, pygame
 
-# PYGAME WINDOW SIZE
-windowSize = width,height = 800,800
 # COLORS
 WHITE = (255, 255, 255)
 DARKGREY = (40, 40, 40)
@@ -11,11 +9,14 @@ LIGHTGREY = (200, 200, 200)
 
 class Grid():
 	def __init__(self, size):
+		pygame.init()
+		# Prepare pygame window size
+		pygameInfo = pygame.display.Info()
+		self.screenSize = (min(pygameInfo.current_w, pygameInfo.current_h) - 200)
 		# Initialize grid
 		self.size = size
-		self.screen = pygame.display.set_mode(windowSize)
+		self.screen = pygame.display.set_mode((self.screenSize, self.screenSize+100))
 		pygame.display.set_caption("Gold Miner")
-		pygame.init()
 		self.grid = [["Empty" for i in range(self.size)] for i in range(self.size)]
 		# Initialize objects
 		numGold = 1
@@ -35,7 +36,7 @@ class Grid():
 			if self.grid[y][x] == "Empty":
 				self.update_grid(gold)
 				numCount += 1
-			print(gold.coordinates)
+			# print(gold.coordinates)
 		numCount = 0
 
 		# BEACONS
@@ -46,7 +47,7 @@ class Grid():
 			if self.grid[y][x] == "Empty":
 				self.update_grid(beacon)
 				numCount += 1
-			print(beacon.coordinates)
+			# print(beacon.coordinates)
 		numCount = 0
 
 		# PITS
@@ -57,7 +58,7 @@ class Grid():
 			if self.grid[y][x] == "Empty":
 				self.update_grid(pit)
 				numCount += 1
-			print(pit.coordinates)
+			# print(pit.coordinates)
 
 		self.draw_grid()
 		pygame.display.update()
@@ -69,13 +70,13 @@ class Grid():
 		self.grid[y][x] = object.name[0]
 
 	def draw_grid(self):
-		tileSize = width // self.size
+		tileSize = self.screenSize // self.size
 		self.screen.fill(LIGHTGREY)
 
 		for i in range(self.size):
-			pygame.draw.line(self.screen, DARKGREY, (0, i * tileSize), (width, i * tileSize))
+			pygame.draw.line(self.screen, DARKGREY, (0, i * tileSize), (self.screenSize, i * tileSize))
 			for j in range(self.size):
-				pygame.draw.line(self.screen, DARKGREY, (j * tileSize, 0), (j * tileSize, width))
+				pygame.draw.line(self.screen, DARKGREY, (j * tileSize, 0), (j * tileSize, self.screenSize))
 				y = i * tileSize
 				x = j * tileSize
 
