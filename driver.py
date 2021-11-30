@@ -11,7 +11,7 @@ while not start:
 		if event.type == pygame.KEYDOWN:
 			start = True
 
-smart = BFS(game)
+smart = gbfs(game)
 
 while True:
     for event in pygame.event.get():

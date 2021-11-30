@@ -3,7 +3,7 @@ from miner import Miner
 import random, sys, pygame
 
 # PYGAME WINDOW SIZE
-windowSize = width,height = 800,800
+windowSize = width,height = 700,700
 # COLORS
 WHITE = (255, 255, 255)
 DARKGREY = (40, 40, 40)
