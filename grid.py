@@ -3,7 +3,7 @@ from miner import Miner
 import random, sys, pygame
 
 # PYGAME WINDOW SIZE
-windowSize = width,height = 700,700
+windowSize = width,height = 800,800
 # COLORS
 WHITE = (255, 255, 255)
 DARKGREY = (40, 40, 40)
@@ -80,17 +80,17 @@ class Grid():
 					# pygame.draw.rect(self.screen, RED, [x+3, y+3, tileSize-3, tileSize-3])
 					gold_img = pygame.image.load("icons\manhole.png")
 					gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-					self.screen.blit(gold_img, (x, y))
+					self.screen.blit(gold_img, (y, x))
 				elif self.grid[i][j] == 'B': # Beacon
 					# pygame.draw.rect(self.screen, GREEN, [x+3, y+3, tileSize-3, tileSize-3])
 					gold_img = pygame.image.load("icons\lighthouse.png")
 					gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-					self.screen.blit(gold_img, (x, y))
+					self.screen.blit(gold_img, (y, x))
 				elif self.grid[i][j] == 'G': # Gold
 					# pygame.draw.rect(self.screen, YELLOW, [x+3, y+3, tileSize-3, tileSize-3])
 					gold_img = pygame.image.load("icons\gold.png")
 					gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-					self.screen.blit(gold_img, (x, y))
+					self.screen.blit(gold_img, (y, x))
 				# else: # Empty
 				# 	pygame.draw.rect(self.screen, BLACK, [x+3, y+3, tileSize-3, tileSize-3])
 
@@ -105,7 +105,7 @@ class Grid():
 		elif self.miner.compass == 'west':
 			gold_img = pygame.image.load("icons\minerW.png")
 		gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-		self.screen.blit(gold_img, (self.miner.coordinates.get('x')*tileSize, self.miner.coordinates.get('y')*tileSize))
+		self.screen.blit(gold_img, (self.miner.coordinates.get('y')*tileSize, self.miner.coordinates.get('x')*tileSize))
 		
 	def scan(self):
 		miner_location = self.miner.coordinates
