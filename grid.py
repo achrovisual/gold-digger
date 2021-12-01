@@ -115,11 +115,12 @@ class Grid():
 		if self.place == 1:
 			dialogue = "Click a tile to place object (Order is Gold -> Beacon -> Pits)"
 		if self.solving == 2:
+			# print('in')
 			if self.grid[self.miner.coordinates.get('y')][self.miner.coordinates.get('x')] == 'P':
 				dialogue = "Game over!"
-			elif self.grid[self.miner.coordinates.get('y')][self.miner.coordinates.get('x')] == 'G':
+			if self.grid[self.miner.coordinates.get('y')][self.miner.coordinates.get('x')] == 'G':
 				dialogue = "Gold found!"
-			elif self.grid[self.miner.coordinates.get('y')][self.miner.coordinates.get('x')] == 'B':
+			if self.grid[self.miner.coordinates.get('y')][self.miner.coordinates.get('x')] == 'B':
 				dialogue = "Beacon found!"
 		dialogueRect = font.get_rect(dialogue, size = 24)
 		dialogueRect.top = dashboardRect.top
@@ -495,15 +496,15 @@ class Grid():
 						pygame.quit()
 					if event.type == pygame.MOUSEBUTTONDOWN:
 						if self.screen.get_rect().collidepoint(event.pos):
-							print(event.pos, tileSize)
-							print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
+							# print(event.pos, tileSize)
+							# print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
 							x = event.pos[0]//tileSize
 							y = event.pos[1]//tileSize
 							if self.grid[y][x] == "Empty":
 								gold = Object("Gold", {"x": x, "y": y})
 								self.update_grid(gold)
 								numCount += 1
-								print(gold.coordinates)
+								# print(gold.coordinates)
 					if event.type == pygame.KEYDOWN:
 						continue
 			numCount = 0
@@ -516,15 +517,15 @@ class Grid():
 						pygame.quit()
 					if event.type == pygame.MOUSEBUTTONDOWN:
 						if self.screen.get_rect().collidepoint(event.pos):
-							print(event.pos, tileSize)
-							print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
+							# print(event.pos, tileSize)
+							# print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
 							x = event.pos[0]//tileSize
 							y = event.pos[1]//tileSize
 							if self.grid[y][x] == "Empty":
 								beacon = Object("Beacon", {"x": x, "y": y})
 								self.update_grid(beacon)
 								numCount += 1
-								print(beacon.coordinates)
+								# print(beacon.coordinates)
 					if event.type == pygame.KEYDOWN:
 						continue
 			numCount = 0
@@ -537,15 +538,15 @@ class Grid():
 						pygame.quit()
 					if event.type == pygame.MOUSEBUTTONDOWN:
 						if self.screen.get_rect().collidepoint(event.pos):
-							print(event.pos, tileSize)
-							print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
+							# print(event.pos, tileSize)
+							# print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
 							x = event.pos[0]//tileSize
 							y = event.pos[1]//tileSize
 							if self.grid[y][x] == "Empty":
 								pit = Object("Pit", {"x": x, "y": y})
 								self.update_grid(pit)
 								numCount += 1
-								print(pit.coordinates)
+								# print(pit.coordinates)
 					if event.type == pygame.KEYDOWN:
 						continue
 			self.place = 2

@@ -328,8 +328,8 @@ class BFS(Agent):
                 self.grid.miner.compass = "north"
 
             if self.grid.check() == 'gold':
+                self.grid.solving = 2
                 solvable = True
-
                 node_counter += 1
                 visited_nodes.append(temp_node)
                 child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
@@ -338,6 +338,7 @@ class BFS(Agent):
                 goal = child
                 solving = False
             elif self.grid.check() == 'pit':
+                self.grid.solving = 2
                 solvable = False
                 solving = False
                 # print('i am in da pit')
