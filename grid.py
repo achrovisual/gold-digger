@@ -18,12 +18,14 @@ class Grid():
 		self.screen = pygame.display.set_mode((self.screenSize, self.screenSize+50))
 		pygame.display.set_caption("Gold Miner")
 		
-		# Config page
+		# Configurations
 		self.size = -1 # grid size
 		self.algo = -1 # 0 - random, 1 - smart
+		self.step = -1 # 0 - step-by-step (per keypress), 1 - fast forward (every x seconds)
 		self.place = -1 # 0 - random, 1 - manual placement
 		self.configGridSize()
 		self.configAlgorithm()
+		self.configSteps()
 		# Initialize grid
 		self.grid = [["Empty" for i in range(self.size)] for i in range(self.size)]
 		# Initialize objects
@@ -239,14 +241,23 @@ class Grid():
 	def show_grid(self):
 		# Update the grid
 		self.draw_grid()
-		time.sleep(0.1)
 		pygame.display.update()
-		
-		for event in pygame.event.get():
-			if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN: # Catch mouse clicks and keyboard press
-				break
-			if event.type == pygame.QUIT: # Catch exit button (top-right)
-				pygame.quit()
+		nextStep = False
+		while not nextStep:
+			if self.step == 0:
+				for event in pygame.event.get():
+					if event.type == pygame.QUIT: # Catch exit button (top-right)
+						pygame.quit()
+					if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN: # Catch mouse clicks and keyboard press
+						nextStep = True
+			elif self.step == 1:
+				nextStep = True
+				time.sleep(0.1)
+				for event in pygame.event.get():
+					if event.type == pygame.QUIT: # Catch exit button (top-right)
+						pygame.quit()
+					if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN: # Catch mouse clicks and keyboard press
+						break
 
 	def configGridSize(self):
 		font = pygame.freetype.SysFont('Montserrat', 40)
@@ -306,7 +317,7 @@ class Grid():
 		infoText = 'Enter agent rationality (random or smart)'
 		inputText = ''
 		errorText = ''
-		inputBox = pygame.Rect(0, 0, 100, 24)
+		inputBox = pygame.Rect(0, 0, 150, 24)
 		color = WHITE
 		
 		while self.algo == -1:
@@ -344,7 +355,61 @@ class Grid():
 			textBox = font.get_rect(inputText, size=24)
 			textBox.center = (self.screenSize/2, self.screenSize/2)
 			inputBox.center = (self.screenSize/2, self.screenSize/2)
-			inputBox.width = max(100, textBox.width)
+			inputBox.width = max(150, textBox.width)
+			pygame.draw.rect(self.screen, color, inputBox)
+			font.render_to(self.screen, textBox, inputText, (0,0,0), size=24)
+			# Error box
+			errorBox = font.get_rect(errorText, size=14)
+			errorBox.center = (self.screenSize/2, (self.screenSize/2)+30)
+			font.render_to(self.screen, errorBox, errorText, RED, size=14)
+			# Update GUI
+			pygame.display.update()
+
+	def configSteps(self):
+		font = pygame.freetype.SysFont('Montserrat', 40)
+		active = True
+		infoText = 'Enter miner movement speed (step-by-step or fast forward)'
+		inputText = ''
+		errorText = ''
+		inputBox = pygame.Rect(0, 0, 200, 24)
+		color = WHITE
+		
+		while self.step == -1:
+			for event in pygame.event.get():
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					if inputBox.collidepoint(event.pos):
+						active = True
+						color = WHITE
+					else:
+						active = False
+						color = LIGHTGREY
+				if event.type == pygame.KEYDOWN:
+					if active:
+						if event.key == pygame.K_RETURN:
+							if inputText == 'step-by-step':
+								self.step = 0
+							elif inputText == 'fast forward':
+								self.step = 1
+							else:
+								errorText = 'Please choose between step-by-step or fast forward'
+						elif event.key == pygame.K_BACKSPACE:
+							inputText = inputText[:-1]
+							errorText = ''
+						else:
+							inputText += event.unicode
+				if event.type == pygame.QUIT:
+					pygame.quit()
+					
+			self.screen.fill(DARKGREY)
+			# Instructions
+			infoBox = font.get_rect(infoText, size=24)
+			infoBox.center = (self.screenSize/2, (self.screenSize/2)-30)
+			font.render_to(self.screen, infoBox, infoText, LIGHTGREY, size=24)
+			# Input box
+			textBox = font.get_rect(inputText, size=24)
+			textBox.center = (self.screenSize/2, self.screenSize/2)
+			inputBox.center = (self.screenSize/2, self.screenSize/2)
+			inputBox.width = max(200, textBox.width)
 			pygame.draw.rect(self.screen, color, inputBox)
 			font.render_to(self.screen, textBox, inputText, (0,0,0), size=24)
 			# Error box
