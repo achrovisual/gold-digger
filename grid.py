@@ -58,9 +58,9 @@ class Grid():
 		self.screen.fill(LIGHTGREY)
 
 		for i in range(self.size):
-			pygame.draw.line(self.screen, DARKGREY, (0, i * tileSize), (self.screenSize, i * tileSize))
+			pygame.draw.line(self.screen, DARKGREY, (0, i * tileSize), (self.size*tileSize, i * tileSize))
 			for j in range(self.size):
-				pygame.draw.line(self.screen, DARKGREY, (j * tileSize, 0), (j * tileSize, self.screenSize))
+				pygame.draw.line(self.screen, DARKGREY, (j * tileSize, 0), (j * tileSize, self.size*tileSize))
 				y = i * tileSize
 				x = j * tileSize
 
@@ -81,7 +81,8 @@ class Grid():
 					self.screen.blit(gold_img, (x, y))
 				# else: # Empty
 				# 	pygame.draw.rect(self.screen, BLACK, [x+3, y+3, tileSize-3, tileSize-3])
-		pygame.draw.line(self.screen, DARKGREY, (0, (i+1) * tileSize), (self.screenSize, (i+1) * tileSize))
+		pygame.draw.line(self.screen, DARKGREY, (0, (i+1) * tileSize), (self.size*tileSize, (i+1) * tileSize))
+		pygame.draw.line(self.screen, DARKGREY, ((j+1) * tileSize, 0), ((j+1) * tileSize, self.size*tileSize))
 
 		# Draw Miner position
 		miner_img = None
