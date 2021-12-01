@@ -164,6 +164,7 @@ class gbfs(Agent):
 
             if solvable:
                 # print("search success")
+                self.grid.miner.actions = [0, 0, 0]
 
                 temp = goal
 
@@ -175,9 +176,9 @@ class gbfs(Agent):
                     temp = temp.parent
                     path.put(temp)
 
-                a = 0
-                b = 0
-                c = 0
+                # a = 0
+                # b = 0
+                # c = 0
 
                 while not path.empty():
                     temp = path.get()
@@ -192,9 +193,12 @@ class gbfs(Agent):
                     # print(temp.actions)
 
                     if temp.actions is not None:
-                        a += temp.actions.count("rotate")
-                        b += temp.actions.count("scan")
-                        c += temp.actions.count("move")
+                        # a += temp.actions.count("rotate")
+                        # b += temp.actions.count("scan")
+                        # c += temp.actions.count("move")
+                        self.grid.miner.actions[1] += temp.actions.count("rotate")
+                        self.grid.miner.actions[2] += temp.actions.count("scan")
+                        self.grid.miner.actions[0] += temp.actions.count("move")
 
                     # print("Number of rotates: ", a)
                     # print("Number of scans: ", b)
