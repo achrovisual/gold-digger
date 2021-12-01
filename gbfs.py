@@ -60,7 +60,7 @@ class gbfs(Agent):
             #deploy actions here
             if currAction == 'move':
                 reachedEdge = self.grid.miner.move()
-                if reachedEdge:
+                if not reachedEdge:
                    currentNode.setEdge(True) 
                 currX = self.grid.miner.coordinates['x']
                 currY = self.grid.miner.coordinates['y']
@@ -68,6 +68,7 @@ class gbfs(Agent):
                 currentNode.y = currY
             elif currAction == 'scan':
                 retVal = self.grid.scan()
+                currentNode.setScanned(True)
                 if retVal == 'P':
                     currentNode.setPit(True)
                     print('scanned pit')
@@ -107,10 +108,42 @@ class gbfs(Agent):
                 newNode = Node(None, currX, currY, currFront, 'in beacon', currentNode)
                 openList.append(newNode)
             for x in closedList:
-                if(currX == x.x and currY == x.y and currFront == x.front and currAction == x.actions):
+                if(currX == x.x and currY == x.y and currFront == x.front and currAction==x.actions):# and currFront == x.front and currAction == x.actions):
                     checkPass = True
+            if checkPass and not breaker:
+                if currentNode.scannedGold: #we found the goal node, our only option is to move forward
+                    moveNode = Node(None, currX, currY, currFront, "move", currentNode)
+                    #moveNode.setCost(heurVal['moveToScannedGold'])
+                    moveNode.setScanned(True)
+                    moveNode.setGold(True)
 
-            if not checkPass and not breaker:
+                    openList.append(moveNode)
+                    print("to gold")
+                elif currentNode.scannedPit:
+                    rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                    #rotateNode.setCost(heurVal['rotateAwayPit'])
+                    print("rotate away pit")
+                    openList.append(rotateNode)
+
+                elif currentNode.scannedFront:
+                    if not currentNode.scannedPit and not currentNode.reachedEdge:
+                        moveNode = Node(None, currX, currY, currFront, "move", currentNode)
+                        openList.append(moveNode)
+                    else:
+                        rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                        openList.append(rotateNode)
+                else:
+                    if not currentNode.reachedEdge:
+                        scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
+                        moveNode = Node(None, currX, currY, currFront, "move", currentNode)
+                        openList.append(moveNode)
+                        openList.append(scanNode)
+                        print("here")
+                    else:
+                        rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
+                        openList.append(rotateNode)
+                    
+            elif not checkPass and not breaker:
                 moveNode = None
                 scanNode = None
                 rotateNode = None
