@@ -19,61 +19,26 @@ class Grid():
 		pygame.display.set_caption("Gold Miner")
 		
 		# Configurations
+		self.solving = 0 # 0 - Idle, 1 - Solving, 2 - Finished
 		self.size = -1 # grid size
 		self.algo = -1 # 0 - random, 1 - smart
 		self.step = -1 # 0 - step-by-step (per keypress), 1 - fast forward (every x seconds)
-		self.place = -1 # 0 - random, 1 - manual placement
+		self.place = -1 # 0 - random, 1 - manual placement, 2 - done
 		self.configGridSize()
 		self.configAlgorithm()
 		self.configSteps()
 		# Initialize grid
 		self.grid = [["Empty" for i in range(self.size)] for i in range(self.size)]
-		# Initialize objects
-		numGold = 1
-		numPits = int(self.size * 0.25)
-		numBeacons = 1 if (self.size * 0.10) < 1 else int(self.size * 0.10)
-		numCount = 0
 
 		# MINER
 		self.miner = Miner("Miner", {"x": 0, "y": 0}, self.size)
 		self.update_grid(self.miner)
-
-		# GOLD
-		while numCount < numGold:
-			x = random.randint(0, self.size-1)
-			y = random.randint(0, self.size-1)
-			gold = Object("Gold", {"x": x, "y": y})
-			if self.grid[y][x] == "Empty":
-				self.update_grid(gold)
-				numCount += 1
-			# print(gold.coordinates)
-		numCount = 0
-
-		# BEACONS
-		while numCount < numBeacons:
-			x = random.randint(0, self.size-1)
-			y = random.randint(0, self.size-1)
-			beacon = Object("Beacon", {"x": x, "y": y})
-			if self.grid[y][x] == "Empty":
-				self.update_grid(beacon)
-				numCount += 1
-			# print(beacon.coordinates)
-		numCount = 0
-
-		# PITS
-		while numCount < numPits:
-			x = random.randint(0, self.size-1)
-			y = random.randint(0, self.size-1)
-			pit = Object("Pit", {"x": x, "y": y})
-			if self.grid[y][x] == "Empty":
-				self.update_grid(pit)
-				numCount += 1
-			# print(pit.coordinates)
-
-		self.solving = 0 # 0 - Idle, 1 - Solving, 2 - Finished
+		
+		self.configObjects()
+		while self.place != 2:
+			continue # wait for objects to be placed
 		self.draw_grid()
 		pygame.display.update()
-		
 		while not self.solving:
 			for event in pygame.event.get():
 				if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -101,14 +66,14 @@ class Grid():
 
 				if self.grid[i][j] == 'P': # Pit
 					# pygame.draw.rect(self.screen, RED, [x+3, y+3, tileSize-3, tileSize-3])
-					gold_img = pygame.image.load("./icons/manhole.png")
-					gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-					self.screen.blit(gold_img, (x, y))
+					pit_img = pygame.image.load("./icons/manhole.png")
+					pit_img = pygame.transform.scale(pit_img, (tileSize, tileSize))
+					self.screen.blit(pit_img, (x, y))
 				elif self.grid[i][j] == 'B': # Beacon
 					# pygame.draw.rect(self.screen, GREEN, [x+3, y+3, tileSize-3, tileSize-3])
-					gold_img = pygame.image.load("./icons/lighthouse.png")
-					gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-					self.screen.blit(gold_img, (x, y))
+					beacon_img = pygame.image.load("./icons/lighthouse.png")
+					beacon_img = pygame.transform.scale(beacon_img, (tileSize, tileSize))
+					self.screen.blit(beacon_img, (x, y))
 				elif self.grid[i][j] == 'G': # Gold
 					# pygame.draw.rect(self.screen, YELLOW, [x+3, y+3, tileSize-3, tileSize-3])
 					gold_img = pygame.image.load("./icons/gold.png")
@@ -119,28 +84,33 @@ class Grid():
 		pygame.draw.line(self.screen, DARKGREY, (0, (i+1) * tileSize), (self.screenSize, (i+1) * tileSize))
 
 		# Draw Miner position
-		gold_img = None
+		miner_img = None
 		if self.miner.compass == 'north':
-			gold_img = pygame.image.load("./icons/minerN.png")
+			miner_img = pygame.image.load("./icons/minerN.png")
 		elif self.miner.compass == 'east':
-			gold_img = pygame.image.load("./icons/minerE.png")
+			miner_img = pygame.image.load("./icons/minerE.png")
 		elif self.miner.compass == 'south':
-			gold_img = pygame.image.load("./icons/minerS.png")
+			miner_img = pygame.image.load("./icons/minerS.png")
 		elif self.miner.compass == 'west':
-			gold_img = pygame.image.load("./icons/minerW.png")
-		gold_img = pygame.transform.scale(gold_img, (tileSize, tileSize))
-		self.screen.blit(gold_img, (self.miner.coordinates.get('x')*tileSize, self.miner.coordinates.get('y')*tileSize))
+			miner_img = pygame.image.load("./icons/minerW.png")
+		miner_img = pygame.transform.scale(miner_img, (tileSize, tileSize))
+		self.screen.blit(miner_img, (self.miner.coordinates.get('x')*tileSize, self.miner.coordinates.get('y')*tileSize))
 
 		dashboardRect = pygame.Rect(0, self.screenSize+15, self.screenSize, 50)
 		# Draw action counters
-		actions = "Moves: " +  str(self.miner.actions[0]) + " Rotates: " + str(self.miner.actions[1]) + " Scans: " + str(self.miner.actions[2])
-		actionsRect = font.get_rect(actions, size = 24)
-		actionsRect.top = dashboardRect.top
-		actionsRect.left = dashboardRect.width/2 + 10
-		font.render_to(self.screen, actionsRect, actions, DARKGREY, size = 24)
+		if self.place == 2:
+			actions = "Moves: " +  str(self.miner.actions[0]) + " Rotates: " + str(self.miner.actions[1]) + " Scans: " + str(self.miner.actions[2])
+			actionsRect = font.get_rect(actions, size = 24)
+			actionsRect.top = dashboardRect.top
+			actionsRect.left = dashboardRect.width/2 + 10
+			font.render_to(self.screen, actionsRect, actions, DARKGREY, size = 24)
 
 		# Draw dialogue box
 		dialogue = "Solving..."
+		if self.place == 1:
+			dialogue = "Click a tile to place object"
+		if self.step == 0:
+			dialogue = "Press any key to show next step"
 		if self.solving == 0:
 			dialogue = "Press spacebar to start"
 		if self.solving == 2:
@@ -418,3 +388,163 @@ class Grid():
 			font.render_to(self.screen, errorBox, errorText, RED, size=14)
 			# Update GUI
 			pygame.display.update()
+
+	def configObjects(self):
+		font = pygame.freetype.SysFont('Montserrat', 40)
+		active = True
+		infoText = 'Enter object placement preference (manual or random)'
+		inputText = ''
+		errorText = ''
+		inputBox = pygame.Rect(0, 0, 200, 24)
+		color = WHITE
+		
+		while self.place == -1:
+			for event in pygame.event.get():
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					if inputBox.collidepoint(event.pos):
+						active = True
+						color = WHITE
+					else:
+						active = False
+						color = LIGHTGREY
+				if event.type == pygame.KEYDOWN:
+					if active:
+						if event.key == pygame.K_RETURN:
+							if inputText == 'manual':
+								self.place = 1
+							elif inputText == 'random':
+								self.place = 0
+							else:
+								errorText = 'Please choose between manual or random'
+						elif event.key == pygame.K_BACKSPACE:
+							inputText = inputText[:-1]
+							errorText = ''
+						else:
+							inputText += event.unicode
+				if event.type == pygame.QUIT:
+					pygame.quit()
+					
+			self.screen.fill(DARKGREY)
+			# Instructions
+			infoBox = font.get_rect(infoText, size=24)
+			infoBox.center = (self.screenSize/2, (self.screenSize/2)-30)
+			font.render_to(self.screen, infoBox, infoText, LIGHTGREY, size=24)
+			# Input box
+			textBox = font.get_rect(inputText, size=24)
+			textBox.center = (self.screenSize/2, self.screenSize/2)
+			inputBox.center = (self.screenSize/2, self.screenSize/2)
+			inputBox.width = max(200, textBox.width)
+			pygame.draw.rect(self.screen, color, inputBox)
+			font.render_to(self.screen, textBox, inputText, (0,0,0), size=24)
+			# Error box
+			errorBox = font.get_rect(errorText, size=14)
+			errorBox.center = (self.screenSize/2, (self.screenSize/2)+30)
+			font.render_to(self.screen, errorBox, errorText, RED, size=14)
+			# Update GUI
+			pygame.display.update()
+		
+		# Initialize objects
+		numGold = 1
+		numPits = int(self.size * 0.25)
+		numBeacons = 1 if (self.size * 0.10) < 1 else int(self.size * 0.10)
+		numCount = 0
+
+		if self.place == 0: # random placement
+			# GOLD
+			while numCount < numGold:
+				x = random.randint(0, self.size-1)
+				y = random.randint(0, self.size-1)
+				gold = Object("Gold", {"x": x, "y": y})
+				if self.grid[y][x] == "Empty":
+					self.update_grid(gold)
+					numCount += 1
+				# print(gold.coordinates)
+			numCount = 0
+
+			# BEACONS
+			while numCount < numBeacons:
+				x = random.randint(0, self.size-1)
+				y = random.randint(0, self.size-1)
+				beacon = Object("Beacon", {"x": x, "y": y})
+				if self.grid[y][x] == "Empty":
+					self.update_grid(beacon)
+					numCount += 1
+				# print(beacon.coordinates)
+			numCount = 0
+
+			# PITS
+			while numCount < numPits:
+				x = random.randint(0, self.size-1)
+				y = random.randint(0, self.size-1)
+				pit = Object("Pit", {"x": x, "y": y})
+				if self.grid[y][x] == "Empty":
+					self.update_grid(pit)
+					numCount += 1
+				# print(pit.coordinates)
+			self.place = 2
+
+		elif self.place == 1: # manual placement
+			tileSize = self.screenSize // self.size
+			# GOLD
+			while numCount < numGold:
+				self.draw_grid()
+				pygame.display.update()
+				for event in pygame.event.get():
+					if event.type == pygame.QUIT:
+						pygame.quit()
+					if event.type == pygame.MOUSEBUTTONDOWN:
+						if self.screen.get_rect().collidepoint(event.pos):
+							print(event.pos, tileSize)
+							print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
+							x = event.pos[0]//tileSize
+							y = event.pos[1]//tileSize
+							if self.grid[y][x] == "Empty":
+								gold = Object("Gold", {"x": x, "y": y})
+								self.update_grid(gold)
+								numCount += 1
+								print(gold.coordinates)
+					if event.type == pygame.KEYDOWN:
+						continue
+			numCount = 0
+			# BEACON
+			while numCount < numBeacons:
+				self.draw_grid()
+				pygame.display.update()
+				for event in pygame.event.get():
+					if event.type == pygame.QUIT:
+						pygame.quit()
+					if event.type == pygame.MOUSEBUTTONDOWN:
+						if self.screen.get_rect().collidepoint(event.pos):
+							print(event.pos, tileSize)
+							print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
+							x = event.pos[0]//tileSize
+							y = event.pos[1]//tileSize
+							if self.grid[y][x] == "Empty":
+								beacon = Object("Beacon", {"x": x, "y": y})
+								self.update_grid(beacon)
+								numCount += 1
+								print(beacon.coordinates)
+					if event.type == pygame.KEYDOWN:
+						continue
+			numCount = 0
+			# PITS
+			while numCount < numPits:
+				self.draw_grid()
+				pygame.display.update()
+				for event in pygame.event.get():
+					if event.type == pygame.QUIT:
+						pygame.quit()
+					if event.type == pygame.MOUSEBUTTONDOWN:
+						if self.screen.get_rect().collidepoint(event.pos):
+							print(event.pos, tileSize)
+							print('(' + str(event.pos[0]//tileSize) + ', ' + str(event.pos[1]//tileSize) + ')')
+							x = event.pos[0]//tileSize
+							y = event.pos[1]//tileSize
+							if self.grid[y][x] == "Empty":
+								pit = Object("Pit", {"x": x, "y": y})
+								self.update_grid(pit)
+								numCount += 1
+								print(pit.coordinates)
+					if event.type == pygame.KEYDOWN:
+						continue
+			self.place = 2
