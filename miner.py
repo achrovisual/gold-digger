@@ -1,13 +1,18 @@
 from object import Object
+import random
 
 class Miner(Object):
     def __init__(self, name, coordinates, size):
         self.name = name
         self.coordinates = coordinates
-        self.compass = "east"
         self.scanned = None
         self.size = size
         self.actions = [0, 0, 0] # move, rotate, scan
+        num = random.randint(0,2)
+        if num:
+            self.compass = "east"
+        else:
+            self.compass = "south"
 
     def move(self):
         # Update coordinates here
