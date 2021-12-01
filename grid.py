@@ -17,7 +17,7 @@ class Grid():
 		self.screenSize = (min(pygameInfo.current_w, pygameInfo.current_h) - 200)
 		self.screen = pygame.display.set_mode((self.screenSize, self.screenSize+50))
 		pygame.display.set_caption("Gold Miner")
-		
+
 		# Configurations
 		self.solving = 0 # 0 - Idle, 1 - Solving, 2 - Finished
 		self.size = -1 # grid size
@@ -204,8 +204,9 @@ class Grid():
 					return_value = 'P'
 				iterator -= 1
 		else:
+			self.grid.miner.scan(return_value)
 			return return_value
-
+		self.grid.miner.scan(return_value)
 		return return_value
 
 	def show_grid(self):
@@ -237,7 +238,7 @@ class Grid():
 		errorText = ''
 		inputBox = pygame.Rect(0, 0, 100, 24)
 		color = WHITE
-		
+
 		while self.size == -1:
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN:
@@ -261,7 +262,7 @@ class Grid():
 							inputText += event.unicode
 				if event.type == pygame.QUIT:
 					pygame.quit()
-					
+
 			self.screen.fill(DARKGREY)
 			# Instructions
 			infoBox = font.get_rect(infoText, size=24)
@@ -289,7 +290,7 @@ class Grid():
 		errorText = ''
 		inputBox = pygame.Rect(0, 0, 150, 24)
 		color = WHITE
-		
+
 		while self.algo == -1:
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN:
@@ -315,7 +316,7 @@ class Grid():
 							inputText += event.unicode
 				if event.type == pygame.QUIT:
 					pygame.quit()
-					
+
 			self.screen.fill(DARKGREY)
 			# Instructions
 			infoBox = font.get_rect(infoText, size=24)
@@ -343,7 +344,7 @@ class Grid():
 		errorText = ''
 		inputBox = pygame.Rect(0, 0, 200, 24)
 		color = WHITE
-		
+
 		while self.step == -1:
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN:
@@ -369,7 +370,7 @@ class Grid():
 							inputText += event.unicode
 				if event.type == pygame.QUIT:
 					pygame.quit()
-					
+
 			self.screen.fill(DARKGREY)
 			# Instructions
 			infoBox = font.get_rect(infoText, size=24)

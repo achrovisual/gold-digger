@@ -7,9 +7,11 @@ class Miner(Object):
         self.compass = "east"
         self.scanned = None
         self.size = size
+        self.actions = [0, 0, 0] # move, rotate, scan
 
     def move(self):
         # Update coordinates here
+        self.actions[0] += 1
         if self.compass == 'east' and self.coordinates['x'] + 1 <= self.size - 1: #add a condition that not at the edge of the map
             self.coordinates['x'] += 1
             return True
@@ -23,11 +25,12 @@ class Miner(Object):
             self.coordinates['y'] += 1
             return True
         else:
-            print('reached edge')
+            # print('reached edge')
             return False
 
     def rotate(self):
         # Update compass here
+        self.actions[1] += 1
         if self.compass == 'north':
             self.compass = 'east'
             return True

@@ -36,7 +36,7 @@ class BFS(Agent):
         while solving:
             # print(self.grid.check())
             if node_queue.empty():
-                break;
+                break
 
             current = node_queue.get()
             self.grid.miner.coordinates["x"] = current.x
@@ -75,7 +75,7 @@ class BFS(Agent):
                                 node_queue.put(child)
                         elif temp_scan == "G":
                             if self.grid.miner.move():
-                                print('moving towards gold', self.grid.miner.coordinates)
+                                # print('moving towards gold', self.grid.miner.coordinates)
                                 actions.append("move")
 
                             if self.grid.check() == 'gold':
@@ -340,12 +340,14 @@ class BFS(Agent):
             elif self.grid.check() == 'pit':
                 solvable = False
                 solving = False
-                print('i am in da pit')
+                # print('i am in da pit')
 
-            print(self.grid.miner.coordinates, self.grid.miner.compass, self.grid.scan())
+            # print(self.grid.miner.coordinates, self.grid.miner.compass, self.grid.scan())
             self.grid.show_grid()
+            # print(self.grid.miner.actions)
             if solvable:
-                print("search success")
+                # print("search success")
+                self.grid.miner.actions = [0, 0, 0] # reset action counter
 
                 temp = goal
 
@@ -357,9 +359,9 @@ class BFS(Agent):
                     temp = temp.parent
                     path.put(temp)
 
-                a = 0
-                b = 0
-                c = 0
+                # a = 0
+                # b = 0
+                # c = 0
 
                 sleep(2.5)
                 while not path.empty():
@@ -369,17 +371,21 @@ class BFS(Agent):
                     self.grid.miner.coordinates["y"] = temp.y
                     self.grid.miner.compass = temp.front
 
-                    self.grid.show_grid()
-                    print("__________")
-                    print("Node ID: ", temp.id)
+                    # print("__________")
+                    # print("Node ID: ", temp.id)
 
-                    print(temp.actions)
+                    # print(temp.actions)
 
                     if temp.actions is not None:
-                        a += temp.actions.count("rotate")
-                        b += temp.actions.count("scan")
-                        c += temp.actions.count("move")
-
-                    print("Number of rotates: ", a)
-                    print("Number of scans: ", b)
-                    print("Number of moves: ", c)
+                        # a += temp.actions.count("rotate")
+                        # b += temp.actions.count("scan")
+                        # c += temp.actions.count("move")
+                        self.grid.miner.actions[0] += temp.actions.count("move")
+                        self.grid.miner.actions[1] += temp.actions.count("rotate")
+                        self.grid.miner.actions[2] += temp.actions.count("scan")
+                    
+                    self.grid.show_grid()
+                    # print(self.grid.miner.actions)
+                    # print("Number of rotates: ", a)
+                    # print("Number of scans: ", b)
+                    # print("Number of moves: ", c)
