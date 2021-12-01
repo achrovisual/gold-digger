@@ -23,6 +23,7 @@ class Grid():
 		self.algo = -1 # 0 - random, 1 - smart
 		self.place = -1 # 0 - random, 1 - manual placement
 		self.configGridSize()
+		self.configAlgorithm()
 		# Initialize grid
 		self.grid = [["Empty" for i in range(self.size)] for i in range(self.size)]
 		# Initialize objects
@@ -249,13 +250,12 @@ class Grid():
 
 	def configGridSize(self):
 		font = pygame.freetype.SysFont('Montserrat', 40)
-		active = False
-		done = False
+		active = True
 		infoText = 'Enter grid size (8-64)'
 		inputText = ''
 		errorText = ''
 		inputBox = pygame.Rect(0, 0, 100, 24)
-		color = LIGHTGREY
+		color = WHITE
 		
 		while self.size == -1:
 			for event in pygame.event.get():
@@ -273,6 +273,60 @@ class Grid():
 								self.size = int(inputText)
 							else:
 								errorText = 'Please input a number between 8 and 64 (inclusive) only'
+						elif event.key == pygame.K_BACKSPACE:
+							inputText = inputText[:-1]
+							errorText = ''
+						else:
+							inputText += event.unicode
+				if event.type == pygame.QUIT:
+					pygame.quit()
+					
+			self.screen.fill(DARKGREY)
+			# Instructions
+			infoBox = font.get_rect(infoText, size=24)
+			infoBox.center = (self.screenSize/2, (self.screenSize/2)-30)
+			font.render_to(self.screen, infoBox, infoText, LIGHTGREY, size=24)
+			# Input box
+			textBox = font.get_rect(inputText, size=24)
+			textBox.center = (self.screenSize/2, self.screenSize/2)
+			inputBox.center = (self.screenSize/2, self.screenSize/2)
+			inputBox.width = max(100, textBox.width)
+			pygame.draw.rect(self.screen, color, inputBox)
+			font.render_to(self.screen, textBox, inputText, (0,0,0), size=24)
+			# Error box
+			errorBox = font.get_rect(errorText, size=14)
+			errorBox.center = (self.screenSize/2, (self.screenSize/2)+30)
+			font.render_to(self.screen, errorBox, errorText, RED, size=14)
+			# Update GUI
+			pygame.display.update()
+
+	def configAlgorithm(self):
+		font = pygame.freetype.SysFont('Montserrat', 40)
+		active = True
+		infoText = 'Enter agent rationality (random or smart)'
+		inputText = ''
+		errorText = ''
+		inputBox = pygame.Rect(0, 0, 100, 24)
+		color = WHITE
+		
+		while self.algo == -1:
+			for event in pygame.event.get():
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					if inputBox.collidepoint(event.pos):
+						active = True
+						color = WHITE
+					else:
+						active = False
+						color = LIGHTGREY
+				if event.type == pygame.KEYDOWN:
+					if active:
+						if event.key == pygame.K_RETURN:
+							if inputText == 'random':
+								self.algo = 0
+							elif inputText == 'smart':
+								self.algo = 1
+							else:
+								errorText = 'Please choose between random or smart agent'
 						elif event.key == pygame.K_BACKSPACE:
 							inputText = inputText[:-1]
 							errorText = ''
