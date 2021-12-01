@@ -7,6 +7,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 DARKGREY = (40, 40, 40)
 LIGHTGREY = (200, 200, 200)
+RED = (255, 90, 90)
 
 class Grid():
 	def __init__(self):
@@ -21,7 +22,7 @@ class Grid():
 		self.size = -1 # grid size
 		self.algo = -1 # 0 - random, 1 - smart
 		self.place = -1 # 0 - random, 1 - manual placement
-		self.config()
+		self.configGridSize()
 		# Initialize grid
 		self.grid = [["Empty" for i in range(self.size)] for i in range(self.size)]
 		# Initialize objects
@@ -246,16 +247,17 @@ class Grid():
 			if event.type == pygame.QUIT: # Catch exit button (top-right)
 				pygame.quit()
 
-	def config(self):
+	def configGridSize(self):
 		font = pygame.freetype.SysFont('Montserrat', 40)
 		active = False
 		done = False
 		infoText = 'Enter grid size (8-64)'
 		inputText = ''
+		errorText = ''
 		inputBox = pygame.Rect(0, 0, 100, 24)
 		color = LIGHTGREY
 		
-		while not done:
+		while self.size == -1:
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					if inputBox.collidepoint(event.pos):
@@ -268,13 +270,14 @@ class Grid():
 					if active:
 						if event.key == pygame.K_RETURN:
 							if inputText.isnumeric() and (int(inputText) >= 8 and int(inputText) <= 64):
-								done = True
 								self.size = int(inputText)
+							else:
+								errorText = 'Please input a number between 8 and 64 (inclusive) only'
 						elif event.key == pygame.K_BACKSPACE:
 							inputText = inputText[:-1]
+							errorText = ''
 						else:
 							inputText += event.unicode
-							print(len(inputText))
 				if event.type == pygame.QUIT:
 					pygame.quit()
 					
@@ -290,5 +293,9 @@ class Grid():
 			inputBox.width = max(100, textBox.width)
 			pygame.draw.rect(self.screen, color, inputBox)
 			font.render_to(self.screen, textBox, inputText, (0,0,0), size=24)
+			# Error box
+			errorBox = font.get_rect(errorText, size=14)
+			errorBox.center = (self.screenSize/2, (self.screenSize/2)+30)
+			font.render_to(self.screen, errorBox, errorText, RED, size=14)
 			# Update GUI
 			pygame.display.update()
