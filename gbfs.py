@@ -2,6 +2,8 @@ from pygame.version import PygameVersion
 from agent import Agent
 from node import Node
 from grid import Grid
+from queue import LifoQueue
+from time import sleep
 
 class gbfs(Agent):
     def __init__(self, grid):
@@ -13,293 +15,192 @@ class gbfs(Agent):
         solvable = False
 
         # Initialize tree
+        node_counter = 0
         miner_location = self.grid.miner.coordinates
         x  = int(miner_location["x"])
         y = int(miner_location["y"])
         miner_compass = self.grid.miner.compass
-        """
-        #establish heuristic values
-        heurVal = {
-            'notScanned': 0, #haven't scanned the front yet
-            'alreadyScanned': 5, #already scanned the front, do we really want to scan again?
-            'rotateAwayNull': 3, #scan returned null, do we rotate?
-            'rotateAwayPit': 0, #avoid at all cost
-            'rotateAwayBeacon': 1, #nope
-            'rotateAwayEdge': 0, #reached the edge
-            'rotateNoScan': 6,
-            'moveToScannedGold': -1, #scan returned gold, let's go!
-            'moveToScannedPit': 10, #JUST DON'T
-            'moveToNullBeacon': 0, #move if scan returned null
-            'movedAfterNull' : 2, #already moved after scan ret null
-            'moveNoScan' : 11,
-            'goal': -5 #we won!
-        }"""
+        actions = []
 
-        root = Node(None, x, y, miner_compass, None, None)
-        #root.setCost(heurVal['notScanned'])
+        root = Node(node_counter, x, y, miner_compass, None, None)
 
-        gridSize = self.grid.size
+        # Initialize node stack
+        node_stack = LifoQueue()
+        node_stack.put(root)
 
-        openList = []
-        closedList = []
+        visited_nodes = []
+        visited_nodes.append({"x": x, "y": y, "front": self.grid.miner.compass})
 
-        openList.append(root)
+        beacon_list = []
 
-        goalNode = None
-        inGold = False
-        inPit = False
-        inBeacon = False
-        while openList and not inGold and not inPit and not inBeacon:
-            currentNode = openList.pop()
-            currFront = currentNode.front
-            currX = currentNode.x
-            currY = currentNode.y
-            currAction = currentNode.actions
-            scannedFront = currentNode.scannedFront
-            breaker = False
-            #deploy actions here
-            if currAction == 'move':
-                reachedEdge = self.grid.miner.move()
-                if not reachedEdge:
-                   currentNode.setEdge(True) 
-                currX = self.grid.miner.coordinates['x']
-                currY = self.grid.miner.coordinates['y']
-                currentNode.x = currX
-                currentNode.y = currY
-            elif currAction == 'scan':
-                retVal = self.grid.scan()
-                currentNode.setScanned(True)
-                if retVal == 'P':
-                    currentNode.setPit(True)
-                    print('scanned pit')
-                elif retVal == 'G':
-                    currentNode.setGold(True)
-                elif retVal == 'B':
-                    currentNode.setBeacon(True)
+        while solving:
+            print('-------------')
+            temp_node = None
+            if node_stack.empty():
+                break;
+
+            current = node_stack.get()
+            self.grid.miner.coordinates["x"] = current.x
+            self.grid.miner.coordinates["y"] = current.y
+            self.grid.miner.compass = current.front
+            self.grid.miner.scanned = None
+            actions = []
+
+            scanning = True
+            counter = 0
+            scan_results = []
+            gold_found = False
+            print('current ', self.grid.miner.coordinates, self.grid.miner.compass)
+
+            while scanning and not gold_found:
+                self.grid.miner.scanned = None
+                if counter == 3:
+                    scanning = False
+                print('facing ', self.grid.miner.compass, self.grid.scan())
+                print((self.grid.miner.compass == 'west' and self.grid.miner.coordinates["x"] - 1 >= self.grid.size - 0))
+
+                if (self.grid.miner.compass == 'east' and self.grid.miner.coordinates["x"] + 1 < self.grid.size - 1) or (self.grid.miner.compass == 'west' and self.grid.miner.coordinates["x"] - 1 >= 0) or (self.grid.miner.compass == 'south' and self.grid.miner.coordinates["y"] + 1 < self.grid.size - 1) or (self.grid.miner.compass == 'north' and self.grid.miner.coordinates["y"] - 1 >= 0):
+                    print({"direction": self.grid.miner.compass, "result": self.grid.scan()})
+                    scan_results.append({"direction": self.grid.miner.compass, "result": self.grid.scan()})
+                    actions.append("scan")
+
+                    if self.grid.miner.rotate():
+                        actions.append("rotate")
+
+                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                    visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                    if not visited:
+                        node_counter += 1
+                        visited_nodes.append(temp_node)
+                        child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                        node_stack.put(child)
                 else:
-                    currentNode.moveToNullBeacon(True)
-            elif currAction == 'rotate':
-                self.grid.miner.rotate()
-                currFront = self.grid.miner.compass
-                currentNode.front = currFront
-                currentNode.setScanned(False)
-                currentNode.setGold(False)
-                currentNode.setPit(False)
-                currentNode.setNull(False)
-            print(currAction)
+                    if self.grid.miner.rotate():
+                        actions.append("rotate")
+
+                    temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                    visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                    if not visited:
+                        node_counter += 1
+                        visited_nodes.append(temp_node)
+                        child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                        node_stack.put(child)
+
+                counter += 1
+
+            self.grid.miner.compass = current.front
+
+            for i in scan_results:
+                # print(i)
+                if 'G' == i["result"]:
+                    self.grid.miner.compass = i["direction"]
+                    print('moving towards gold', self.grid.miner.coordinates, self.grid.miner.compass)
+                    gold_found = True
+                    break
+
+            for i in scan_results:
+                if 'B' == i["result"] and not gold_found:
+                    if beacon_list.count(self.grid.miner.coordinates) == 0:
+                        self.grid.miner.compass = i["direction"]
+                        print('moving towards beacon', self.grid.miner.coordinates, self.grid.miner.compass)
+                        break
+            for i in scan_results:
+                if 'P' == i["result"] and i["direction"] == self.grid.miner.compass and not gold_found:
+                    if self.grid.miner.rotate():
+                        print('rotating away from pit', self.grid.miner.coordinates)
+                        actions.append("rotate")
+                    node_counter += 1
+                    visited_nodes.append(temp_node)
+                    child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                    node_stack.put(child)
+                    break
+
+            if (self.grid.miner.compass == 'east' and self.grid.miner.coordinates["x"] + 1 <= self.grid.size - 1) or (self.grid.miner.compass == 'west' and self.grid.miner.coordinates["x"] - 1 >=  0) or (self.grid.miner.compass == 'south' and self.grid.miner.coordinates["y"] + 1 <= self.grid.size - 1) or (self.grid.miner.compass == 'north' and self.grid.miner.coordinates["y"] - 1 >= 0):
+                if self.grid.miner.move():
+                    print('moving forward ', self.grid.miner.coordinates, self.grid.miner.compass)
+                    actions.append("move")
+                temp_node = {"x": self.grid.miner.coordinates["x"], "y": self.grid.miner.coordinates["y"], "front": self.grid.miner.compass}
+                visited = True if visited_nodes.count(temp_node) > 0 else False
+
+                if not visited:
+                    node_counter += 1
+                    visited_nodes.append(temp_node)
+                    child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                    node_stack.put(child)
+            else:
+                if self.grid.miner.rotate():
+                    print('rotating away from edge', self.grid.miner.coordinates)
+                    actions.append("rotate")
+                node_counter += 1
+                visited_nodes.append(temp_node)
+                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                node_stack.put(child)
+
+            node_counter += 1
+            visited_nodes.append(temp_node)
+            child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+            node_stack.put(child)
+
+            if self.grid.check() == 'gold':
+                solvable = True
+
+                node_counter += 1
+                visited_nodes.append(temp_node)
+                child = Node(node_counter, self.grid.miner.coordinates["x"], self.grid.miner.coordinates["y"], self.grid.miner.compass, actions, current)
+                node_stack.put(child)
+
+                goal = child
+                solving = False
+            elif self.grid.check() == 'pit':
+                solvable = False
+                solving = False
+                print('i am in da pit')
+
+            elif self.grid.check() == 'beacon':
+                beacon_list.append(self.grid.miner.coordinates)
+                print('im in da beacon')
+
+            if solvable:
+                print("search success")
+
+                temp = goal
+
+                path = LifoQueue()
+
+                path.put(temp)
+
+                while temp.parent is not None:
+                    temp = temp.parent
+                    path.put(temp)
+
+                a = 0
+                b = 0
+                c = 0
+
+                sleep(2.5)
+                while not path.empty():
+                    sleep(.25)
+                    temp = path.get()
+                    self.grid.miner.coordinates["x"] = temp.x
+                    self.grid.miner.coordinates["y"] = temp.y
+                    self.grid.miner.compass = temp.front
+
+                    self.grid.show_grid()
+                    print("__________")
+                    print("Node ID: ", temp.id)
+
+                    print(temp.actions)
+
+                    if temp.actions is not None:
+                        a += temp.actions.count("rotate")
+                        b += temp.actions.count("scan")
+                        c += temp.actions.count("move")
+
+                    print("Number of rotates: ", a)
+                    print("Number of scans: ", b)
+                    print("Number of moves: ", c)
+
             self.grid.show_grid()
-            
-            checkCurrTile = self.grid.check()
-            checkPass = False
-
-            if checkCurrTile == 'gold':
-                inGold = True
-                newNode = Node(None, currX, currY, currFront, "goal", currentNode)
-                goalNode = newNode
-                breaker = True
-            if checkCurrTile == 'pit':
-                inPit = True
-                newNode = Node(None, currX, currY, currFront, "pit", currentNode)
-                goalNode = newNode
-                breaker = True
-            if checkCurrTile == 'beacon':
-                breaker = True
-                inBeacon = True
-                newNode = Node(None, currX, currY, currFront, 'in beacon', currentNode)
-                openList.append(newNode)
-            for x in closedList:
-                if(currX == x.x and currY == x.y and currFront == x.front and currAction==x.actions):# and currFront == x.front and currAction == x.actions):
-                    checkPass = True
-            if checkPass and not breaker:
-                if currentNode.scannedGold: #we found the goal node, our only option is to move forward
-                    moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                    #moveNode.setCost(heurVal['moveToScannedGold'])
-                    moveNode.setScanned(True)
-                    moveNode.setGold(True)
-
-                    openList.append(moveNode)
-                    print("to gold")
-                elif currentNode.scannedPit:
-                    rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                    #rotateNode.setCost(heurVal['rotateAwayPit'])
-                    print("rotate away pit")
-                    openList.append(rotateNode)
-
-                elif currentNode.scannedFront:
-                    if not currentNode.scannedPit and not currentNode.reachedEdge:
-                        moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                        openList.append(moveNode)
-                    else:
-                        rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                        openList.append(rotateNode)
-                else:
-                    if not currentNode.reachedEdge:
-                        scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
-                        moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                        openList.append(moveNode)
-                        openList.append(scanNode)
-                        print("here")
-                    else:
-                        rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                        openList.append(rotateNode)
-                    
-            elif not checkPass and not breaker:
-                moveNode = None
-                scanNode = None
-                rotateNode = None
-
-                if currentNode.scannedPit:
-                    rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                    #rotateNode.setCost(heurVal['rotateAwayPit'])
-                    print("rotate away pit")
-                    openList.append(rotateNode)
-
-                elif currentNode.scannedGold: #we found the goal node, our only option is to move forward
-                    moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                    #moveNode.setCost(heurVal['moveToScannedGold'])
-                    moveNode.setScanned(True)
-                    moveNode.setGold(True)
-
-                    openList.append(moveNode)
-                    print("to gold")
-                elif currentNode.scannedBeacon:
-                    moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                    #moveNode.setCost(heurVal['moveToScannedGold'])
-                    moveNode.setScanned(True)
-                    moveNode.setGold(True)
-
-                    openList.append(moveNode)
-                elif currentNode.moveToNull:
-                    moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                    #moveNode.setCost(heurVal['moveToNullBeacon'])
-                    
-                    scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
-                    #scanNode.setCost(heurVal['notScanned'])
-
-                    rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                    #rotateNode.setCost(heurVal['rotateNoScan'])
-
-                    openList.append(moveNode)
-                    openList.append(scanNode)
-                    openList.append(rotateNode)
-
-                    """
-                    if(moveNode.cost > scanNode.cost and moveNode.cost > rotateNode.cost):
-                        openList.append(moveNode)
-                        if(scanNode.cost > rotateNode.cost):
-                            openList.append(scanNode)
-                            openList.append(rotateNode)
-                        else:
-                            openList.append(rotateNode)
-                            openList.append(scanNode)
-                    elif(scanNode.cost > moveNode.cost and scanNode.cost > rotateNode.cost):
-                        openList.append(scanNode)
-                        if(moveNode.cost > rotateNode):
-                            openList.append(moveNode)
-                            openList.append(rotateNode)
-                        else:
-                            openList.append(rotateNode)
-                            openList.append(moveNode)
-                    elif(rotateNode.cost > moveNode.cost and rotateNode.cost > scanNode.cost):
-                        openList.append(rotateNode)
-                        if(moveNode.cost > scanNode.cost):
-                            openList.append(moveNode)
-                            openList.append(scanNode)
-                        else:
-                            openList.append(scanNode)
-                            openList.append(moveNode)
-                elif currentNode.reachedEdge:
-                    rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                    rotateNode.setCost(heurVal['rotateAwayEdge'])
-                    
-                    openList.append(rotateNode)
-                    """
-                elif not currentNode.scannedGold and not currentNode.moveToNull:
-                    if checkCurrTile != 'gold' or checkCurrTile != 'pit':
-                        if (currX >= 0) and (currY >= 0 ):# and currFront !='north'         and currFront != 'west'
-                            if ((currY == 0 and currFront =='north') or ( currX == 0 and currFront == 'west')):
-                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                                #rotateNode.setCost(heurVal['rotateAwayEdge'])
-
-                                openList.append(rotateNode)
-                                print("3 elif")
-
-                            elif not scannedFront and ((currY < gridSize-1 and currFront!='south') or (currX < gridSize-1 and currFront != 'east')):
-                                scanNode = Node(None, currX, currY, currFront, "scan", currentNode)
-                                scanNode.setScanned(True)
-                                #scanNode.setCost(heurVal['alreadyScanned'])
-
-                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                                #rotateNode.setCost(heurVal['rotateNoScan'])
-
-                                moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                                #moveNode.setCost(heurVal['moveNoScan'])
-                                
-                                openList.append(moveNode)
-                                openList.append(rotateNode)
-                                openList.append(scanNode)
-                                """
-                                if(moveNode.cost > scanNode.cost and moveNode.cost > rotateNode.cost):
-                                    openList.append(moveNode)
-                                    if(scanNode.cost > rotateNode.cost):
-                                        openList.append(scanNode)
-                                        openList.append(rotateNode)
-                                    else:
-                                        openList.append(rotateNode)
-                                        openList.append(scanNode)
-                                elif(scanNode.cost > moveNode.cost and scanNode.cost > rotateNode.cost):
-                                    openList.append(scanNode)
-                                    if(moveNode.cost > rotateNode):
-                                        openList.append(moveNode)
-                                        openList.append(rotateNode)
-                                    else:
-                                        openList.append(rotateNode)
-                                        openList.append(moveNode)
-                                elif(rotateNode.cost > moveNode.cost and rotateNode.cost > scanNode.cost):
-                                    openList.append(rotateNode)
-                                    if(moveNode.cost > scanNode.cost):
-                                        openList.append(moveNode)
-                                        openList.append(scanNode)
-                                    else:
-                                        openList.append(scanNode)
-                                        openList.append(moveNode)
-                                """
-                                print("1 elif")
-
-                            elif scannedFront and ((currY < gridSize-1 and currFront!='south') or (currX < gridSize-1 and currFront != 'east')):
-
-                                moveNode = Node(None, currX, currY, currFront, "move", currentNode)
-                                moveNode.setScanned(True)
-                                #moveNode.setCost(heurVal['movedAfterNull'])
-
-                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                                rotateNode.setScanned(False)
-                                #rotateNode.setCost(heurVal['rotateAwayNull'])
-
-                                """
-                                if rotateNode.cost > moveNode.cost:
-                                    openList.append(rotateNode)
-                                    openList.append(moveNode)
-                                else:
-                                    openList.append(moveNode)
-                                    openList.append(rotateNode)"""
-                                
-                                openList.append(rotateNode)
-                                openList.append(moveNode)
-                                print("4 elif")
-
-                            elif ((currY == gridSize-1 and currFront =='south') or (currX == gridSize-1 and currFront == 'east')):
-                                rotateNode = Node(None, currX, currY, currFront, "rotate", currentNode)
-                                #rotateNode.setCost(heurVal['rotateAwayEdge'])
-
-                                openList.append(rotateNode)
-                                print("2 elif")
-                
-                closedList.append(currentNode)
-            
-        if inGold:
-            print('found')
-        if inPit:
-            print("landed in pit")
-        if inBeacon:
-            print("in beacon")
+            sleep(.25)
