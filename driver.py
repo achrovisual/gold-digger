@@ -3,16 +3,12 @@ from bfs import BFS
 from gbfs import gbfs
 import pygame
 
-game = Grid(8)
+game = Grid()
 
-start = False
-while not start:
-	for event in pygame.event.get():
-		if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-			start = True
-
-# random = BFS(game)
-smart = gbfs(game)
+if game.algo == 0:
+	random = BFS(game)
+elif game.algo == 1:
+	smart = gbfs(game)
 
 while True:
     for event in pygame.event.get():
