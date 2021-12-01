@@ -107,12 +107,12 @@ class Grid():
 
 		# Draw dialogue box
 		dialogue = "Solving..."
-		if self.place == 1:
-			dialogue = "Click a tile to place object"
-		if self.step == 0:
-			dialogue = "Press any key to show next step"
 		if self.solving == 0:
 			dialogue = "Press spacebar to start"
+		if self.step == 0:
+			dialogue = "Press any key to show next step"
+		if self.place == 1:
+			dialogue = "Click a tile to place object (Order is Gold -> Beacon -> Pits)"
 		if self.solving == 2:
 			if self.grid[self.miner.coordinates.get('y')][self.miner.coordinates.get('x')] == 'P':
 				dialogue = "Game over!"
@@ -149,10 +149,9 @@ class Grid():
 		anchor_value = 0
 		return_value = ''
 
-		self.miner.actions[2] += 1
 		#lateral movement
 		if miner_compass == 'east':
-			iterator = int(miner_location['x'])
+			iterator = int(miner_location['x'])+1
 			anchor_value = int(miner_location['y'])
 
 			while iterator < self.size and return_value == '':
@@ -165,7 +164,7 @@ class Grid():
 				iterator += 1
 
 		elif miner_compass == 'west':
-			iterator = int(miner_location['x'])
+			iterator = int(miner_location['x'])-1
 			anchor_value = int(miner_location['y'])
 
 			while iterator >= 0 and return_value == '':
@@ -179,7 +178,7 @@ class Grid():
 
 		#longitudinal movement
 		elif miner_compass == 'south':
-			iterator = int(miner_location['y'])
+			iterator = int(miner_location['y'])+1
 			anchor_value = int(miner_location['x'])
 
 			while iterator < self.size and return_value == '':
@@ -192,7 +191,7 @@ class Grid():
 				iterator += 1
 
 		elif miner_compass == 'north':
-			iterator = int(miner_location['y'])
+			iterator = int(miner_location['y'])-1
 			anchor_value = int(miner_location['x'])
 
 			while iterator >= 0 and return_value == '':
@@ -204,9 +203,9 @@ class Grid():
 					return_value = 'P'
 				iterator -= 1
 		else:
-			self.grid.miner.scan(return_value)
+			self.miner.scan(return_value)
 			return return_value
-		self.grid.miner.scan(return_value)
+		self.miner.scan(return_value)
 		return return_value
 
 	def show_grid(self):
@@ -215,13 +214,13 @@ class Grid():
 		pygame.display.update()
 		nextStep = False
 		while not nextStep:
-			if self.step == 0:
+			if self.step == 0: # Step-by-Step
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT: # Catch exit button (top-right)
 						pygame.quit()
 					if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN: # Catch mouse clicks and keyboard press
 						nextStep = True
-			elif self.step == 1:
+			elif self.step == 1: # Fast forward
 				nextStep = True
 				time.sleep(0.1)
 				for event in pygame.event.get():

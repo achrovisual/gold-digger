@@ -48,5 +48,6 @@ class Miner(Object):
     def scan(self, result):
         # Update scanned here
         self.scanned = result
+        self.actions[2] += 1
         #perform decision here
         #if self.gridScanRetVal == <X>, then <Y>
